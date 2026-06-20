@@ -10,15 +10,15 @@ DIM_ORDER = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
 def _sentence_count(text):
     # Neutralize false terminators before splitting on sentence boundaries.
     t = text
-    # URLs (http/https)
-    t = re.sub(r'https?://\S+', 'URL', t)
-    # Decimals and version numbers (e.g. 1.0, v3.14)
-    t = re.sub(r'\b\d+\.\d+\b', 'NUM', t)
-    # Domain/path tokens (word.word style tokens)
-    t = re.sub(r'\b[\w-]+\.[\w./\-]+\b', 'TOKEN', t)
-    # Common abbreviations
-    abbrevs = r'\b(?:i\.e|e\.g|vs|etc|U\.S|Inc|Ltd|Co|approx|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec|Mr|Mrs|Dr|Prof|Sr|Jr)\.'
-    t = re.sub(abbrevs, lambda m: m.group(0).replace('.', 'DOT'), t, flags=re.IGNORECASE)
+    # 1. URLs (http/https)
+    t = re.sub(r'https?://\S+', ' ', t)
+    # 2. Common abbreviations (BEFORE domain/decimal, to prevent partial consumption)
+    t = re.sub(r'\b(?:e\.g|i\.e|vs|etc|u\.s|inc|ltd|co|approx|dept|fig|no|vol)\.', ' ', t, flags=re.IGNORECASE)
+    # 3. Decimals and version numbers (e.g. 1.0, v3.14)
+    t = re.sub(r'\b\d+\.\d+\b', ' ', t)
+    # 4. Domain/path tokens (word.word style tokens)
+    t = re.sub(r'\b[\w-]+\.[\w./\-]+\b', ' ', t)
+    # 5. Split on sentence boundaries and count non-empty parts
     parts = re.split(r'[.!?]+(?=\s|$)', t)
     return len([s for s in parts if s.strip()])
 

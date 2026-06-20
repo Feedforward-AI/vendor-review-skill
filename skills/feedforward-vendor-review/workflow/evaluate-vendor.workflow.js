@@ -17,7 +17,8 @@ const dossier = await agent(
   { label: 'evidence', schema: { type: 'object', additionalProperties: false,
       required: ['vendor', 'scope_check', 'facts', 'gaps'],
       properties: {
-        vendor: { type: 'string' },
+        // Lightweight mirror of schemas/evidence-dossier.schema.json for structured-output generation
+        vendor: { type: 'object' },
         scope_check: { type: 'object' },
         facts: { type: 'array', items: { type: 'object' } },
         gaps: { type: 'array', items: { type: 'object' } }
