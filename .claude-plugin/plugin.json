@@ -1,0 +1,10 @@
+{
+  "name": "vendor-review",
+  "version": "0.1.0",
+  "description": "Evaluate an AI-powered software vendor against Feedforward's six-dimension framework for independent AI capacity (SEE/CHANGE/ADAPT/USE/LEARN/EXIT).",
+  "author": { "name": "Feedforward", "url": "https://github.com/Feedforward-AI" },
+  "homepage": "https://github.com/Feedforward-AI/vendor-review-skill",
+  "repository": "https://github.com/Feedforward-AI/vendor-review-skill",
+  "license": "UNLICENSED",
+  "keywords": ["ai", "vendor-evaluation", "procurement", "feedforward", "capacity"]
+}
