@@ -90,7 +90,7 @@ def _detail_html(report):
         d = by_dim[dim]
         cls = CSS_CLASS.get(d["score"], "")
         rows.append(f"<h3>{_e(dim)} — {_e(d['focus_area'])} "
-                    f"<span class='{cls}'>[{_result(d['score'])}]</span></h3>")
+                    f"<span class='{cls}'>[{_e(_result(d['score']))}]</span></h3>")
         rows.append(f"<p>{_e(d['assessment'])}</p>")
         rows.append(f"<p><span class='gain'>+ Gain:</span> {_e(d['trade_offs']['gain'])}<br>"
                     f"<span class='giveup'>− Give up:</span> {_e(d['trade_offs']['give_up'])}</p>")
@@ -106,7 +106,7 @@ def _overview_html(report):
         if dim in by_overview:
             row = by_overview[dim]
             body.append(f"<tr><td>{_e(row['dimension'])}</td><td>{_e(row['focus_area'])}</td>"
-                        f"<td class='{CSS_CLASS.get(row['result'], '')}'>{_result(row['result'])}</td></tr>")
+                        f"<td class='{CSS_CLASS.get(row['result'], '')}'>{_e(_result(row['result']))}</td></tr>")
     body.append("</table>")
     return "".join(body)
 
@@ -120,7 +120,7 @@ def _tradeoff_html(report):
             row = by_tradeoff[dim]
             cls = CSS_CLASS.get(row["result"], "")
             rows.append(f"<tr><td>{_e(row['dimension'])}</td>"
-                        f"<td class='{cls}'>{_result(row['result'])}</td>"
+                        f"<td class='{cls}'>{_e(_result(row['result']))}</td>"
                         f"<td>{_e(row['gain'])}</td><td>{_e(row['give_up'])}</td></tr>")
     rows.append("</table>")
     return "\n".join(rows)

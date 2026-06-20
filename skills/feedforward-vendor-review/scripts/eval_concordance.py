@@ -19,10 +19,35 @@ def score_concordance(produced, expected):
 
 
 def theme_presence(produced, themes):
+    # Gather all human-readable report text
+    text_parts = []
+
+    # Executive summary
     es = produced.get("executive_summary", {})
-    hay = " ".join([es.get("key_takeaway", ""), es.get("suitability", "")]
-                   + es.get("paragraphs", [])
-                   + [d.get("assessment", "") for d in produced.get("detailed", [])]).lower()
+    text_parts.append(es.get("key_takeaway", ""))
+    text_parts.append(es.get("suitability", ""))
+    text_parts.extend(es.get("paragraphs", []))
+
+    # Detailed entries (assessment, trade_offs, vendor_questions)
+    for d in produced.get("detailed", []):
+        text_parts.append(d.get("assessment", ""))
+        trade_offs = d.get("trade_offs", {})
+        text_parts.append(trade_offs.get("gain", ""))
+        text_parts.append(trade_offs.get("give_up", ""))
+        # Vendor questions are a list of strings
+        text_parts.extend(d.get("vendor_questions", []))
+
+    # Top-level key_questions
+    text_parts.extend(produced.get("key_questions", []))
+
+    # Top-level vendor_questions (extract question text from each entry)
+    for vq in produced.get("vendor_questions", []):
+        if isinstance(vq, dict):
+            text_parts.append(vq.get("question", ""))
+        else:
+            text_parts.append(str(vq))
+
+    hay = " ".join(str(p) for p in text_parts).lower()
     found = [t for t in themes if t.lower() in hay]
     missing = [t for t in themes if t.lower() not in hay]
     return {"found": found, "missing": missing}

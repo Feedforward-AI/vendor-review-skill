@@ -208,3 +208,55 @@ def test_markdown_tradeoff_table_renders_in_dim_order():
     positions = [tradeoff_section.find(f"| {d} |") for d in dims]
     assert all(p != -1 for p in positions), f"Not all dims in tradeoff: {list(zip(dims, positions))}"
     assert positions == sorted(positions), f"Markdown tradeoff not in DIM_ORDER"
+
+
+# --- FIX A: Score/result display HTML escaping ---
+
+def test_html_escape_score_in_detail_section():
+    """Score with metacharacters in detailed evaluation must be HTML-escaped."""
+    r = load()
+    # Set a detailed entry's score to include metacharacters
+    r["detailed"][0]["score"] = "Pa<b>ss"
+    html = render_report.render_html(r, TEMPLATE)
+    # Escaped version must appear, raw version must not
+    assert "Pa&lt;b&gt;ss" in html
+    assert "Pa<b>ss" not in html
+    # Also check that the raw <b> tag did not get rendered
+    assert "<b>ss</b>" not in html
+
+
+def test_html_escape_result_in_overview_table():
+    """Overview table result with metacharacters must be HTML-escaped."""
+    r = load()
+    # Set the overview_table result to include metacharacters
+    r["overview_table"][0]["result"] = "Pa<b>ss"
+    # Sync the detailed score too
+    dim = r["overview_table"][0]["dimension"]
+    for d in r["detailed"]:
+        if d["dimension"] == dim:
+            d["score"] = "Pa<b>ss"
+    html = render_report.render_html(r, TEMPLATE)
+    # Escaped version must appear in the table
+    assert "Pa&lt;b&gt;ss" in html
+    # Raw <b> must not appear as an HTML tag in result context
+    assert "Pa<b>ss" not in html
+
+
+def test_html_escape_result_in_tradeoff_table():
+    """Tradeoff summary result with metacharacters must be HTML-escaped."""
+    r = load()
+    # Set the tradeoff_summary result to include metacharacters
+    r["tradeoff_summary"][0]["result"] = "Pa<b>ss"
+    # Sync the detailed and overview entries
+    dim = r["tradeoff_summary"][0]["dimension"]
+    for d in r["detailed"]:
+        if d["dimension"] == dim:
+            d["score"] = "Pa<b>ss"
+    for o in r["overview_table"]:
+        if o["dimension"] == dim:
+            o["result"] = "Pa<b>ss"
+    html = render_report.render_html(r, TEMPLATE)
+    # Escaped version must appear
+    assert "Pa&lt;b&gt;ss" in html
+    # Raw version and stray <b> tag must not appear
+    assert "Pa<b>ss" not in html
