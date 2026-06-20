@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "dimension", "question", "why_we_ask", "current_basis", "what_would_change"],
+  "properties": {
+    "id": {"type": "string"},
+    "dimension": {"enum": ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]},
+    "question": {"type": "string"},
+    "why_we_ask": {"type": "string"},
+    "current_basis": {"type": "string"},
+    "what_would_change": {"type": "string"}
+  }
+}
