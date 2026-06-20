@@ -15,7 +15,7 @@ Before any analysis begins, confirm the evaluation target is appropriate for thi
 
 1. **Target confirmation.** Ask (or infer from context) the specific vendor and product SKU being evaluated. If the product is ambiguous (e.g., multiple tiers or modules), clarify before proceeding.
 2. **Framework eligibility.** Confirm the target is an AI-powered B2B SaaS product. If it is not AI-powered or not B2B SaaS, stop and explain that the Feedforward framework does not apply — do not force the evaluation.
-3. **Optional user materials.** Accept any documents the exec wishes to supply (e.g., vendor pitch decks, demo transcripts, contract excerpts, internal use-case notes). Ingest them as `user_supplied` source evidence in Stage 1.
+3. **Optional user materials.** Accept any documents the exec wishes to supply (e.g., vendor pitch decks, demo transcripts, contract excerpts, internal use-case notes). Ingest them as `user_material` source evidence in Stage 1.
 4. **Optional org context.** Accept any organizational context (e.g., current AI maturity, key strategic constraints, existing tooling). Org context is held separately and is only folded in at Stage 3 (suitability line + Key Questions) — it does not influence dimension scoring.
 
 ---
@@ -92,7 +92,7 @@ If any dimension result fails the drift check, re-run the affected `dimension-an
 
 **What the exec may do:**
 - Correct **evidence** — supply a document, fact, or clarification that changes what is known about the vendor. Triggers a partial re-run of affected stages.
-- **Answer open vendor questions** — if the exec has direct knowledge of a vendor answer, treat it as `user_supplied` evidence with `evidence_strength: moderate`.
+- **Answer open vendor questions** — if the exec has direct knowledge of a vendor answer, treat it as `user_material` evidence with `evidence_strength: user_provided`.
 - Add or refine **org context** — updates the suitability line and Key Questions only; does not re-run dimension scoring.
 
 **What the exec may NOT do:**
