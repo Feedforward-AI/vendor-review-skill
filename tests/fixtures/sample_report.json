@@ -130,7 +130,7 @@
       "dimension": "EXIT",
       "focus_area": "Portability & Exit Risk",
       "score": "Fail",
-      "assessment": "Glean's value is concentrated in its proprietary knowledge graph, which is not exportable. At contract end, customers lose access to the graph, the indexed content relationships, and all personalization signals accumulated over the contract term. Source documents remain in their original systems (OneDrive, Confluence, etc.) but the cross-application relationships, relevance tuning, and search history are not portable. Switching costs include re-indexing time, workflow retraining, and the inability to transfer any Glean-specific configuration to a competing platform.",
+      "assessment": "Glean's value is concentrated in its proprietary knowledge graph, which is not exportable. At contract end, customers lose access to the graph, the indexed content relationships, and all personalization signals accumulated over the contract term, while source documents remain in their original systems but cross-application relationships and search history are not portable. Switching costs include re-indexing time, workflow retraining, and the inability to transfer any Glean-specific configuration to a competing platform.",
       "trade_offs": {
         "gain": "No up-front indexing investment required; Glean builds and maintains the graph on the customer's behalf.",
         "give_up": "Any accumulated graph intelligence or relationship data at contract end; practical switching costs rise with tenure."
