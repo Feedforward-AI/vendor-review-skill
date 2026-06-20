@@ -74,3 +74,47 @@ def test_lint_flags_too_many_sentences():
     )
     violations = lint_report.lint(r)
     assert any("assessment" in v and "sentence" in v for v in violations)
+
+
+# --- FIX 5: tradeoff_summary cross-check and table order enforcement ---
+
+def test_clean_report_passes_tradeoff_check():
+    """The clean fixture passes the new tradeoff checks."""
+    assert lint_report.lint(base()) == []
+
+def test_detects_tradeoff_summary_score_mismatch():
+    """Flags when tradeoff_summary result differs from detailed score."""
+    r = base()
+    dim = r["detailed"][0]["dimension"]
+    current_score = r["detailed"][0]["score"]
+    wrong_score = "Pass" if current_score != "Pass" else "Fail"
+    for row in r["tradeoff_summary"]:
+        if row["dimension"] == dim:
+            row["result"] = wrong_score
+    violations = lint_report.lint(r)
+    assert any("tradeoff_summary" in v for v in violations), f"Expected tradeoff violation, got: {violations}"
+
+def test_detects_overview_table_wrong_order():
+    """Flags when overview_table dimensions are not in DIM_ORDER."""
+    r = base()
+    r["overview_table"] = list(reversed(r["overview_table"]))
+    violations = lint_report.lint(r)
+    assert any("overview_table" in v and "order" in v for v in violations), (
+        f"Expected overview_table order violation, got: {violations}"
+    )
+
+def test_detects_tradeoff_summary_wrong_order():
+    """Flags when tradeoff_summary dimensions are not in DIM_ORDER."""
+    r = base()
+    r["tradeoff_summary"] = list(reversed(r["tradeoff_summary"]))
+    violations = lint_report.lint(r)
+    assert any("tradeoff_summary" in v and "order" in v for v in violations), (
+        f"Expected tradeoff_summary order violation, got: {violations}"
+    )
+
+def test_correct_order_does_not_flag_order_violations():
+    """Fixture with correct DIM_ORDER does not trigger order violations."""
+    r = base()
+    violations = lint_report.lint(r)
+    order_violations = [v for v in violations if "order" in v]
+    assert order_violations == [], f"Unexpected order violations on clean fixture: {order_violations}"
