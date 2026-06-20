@@ -75,7 +75,7 @@ def _detail_html(report):
     by_dim = {d["dimension"]: d for d in report["detailed"]}
     for dim in DIM_ORDER:
         d = by_dim[dim]
-        cls = CSS_CLASS[d["score"]]
+        cls = CSS_CLASS.get(d["score"], "")
         rows.append(f"<h3>{dim} — {d['focus_area']} "
                     f"<span class='{cls}'>[{_result(d['score'])}]</span></h3>")
         rows.append(f"<p>{d['assessment']}</p>")
@@ -90,7 +90,7 @@ def _overview_html(report):
     body = ["<h2>Evaluation Overview</h2><table><tr><th>Criterion</th><th>Focus Area</th><th>Result</th></tr>"]
     for row in report["overview_table"]:
         body.append(f"<tr><td>{row['dimension']}</td><td>{row['focus_area']}</td>"
-                    f"<td class='{CSS_CLASS[row['result']]}'>{_result(row['result'])}</td></tr>")
+                    f"<td class='{CSS_CLASS.get(row['result'], '')}'>{_result(row['result'])}</td></tr>")
     body.append("</table>")
     return "".join(body)
 

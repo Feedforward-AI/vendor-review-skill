@@ -87,3 +87,13 @@ def test_html_no_changelog_section_when_empty():
     r["changelog"] = []
     html = render_report.render_html(r, TEMPLATE)
     assert "What changed after vendor response" not in html
+
+def test_html_does_not_crash_on_unexpected_score():
+    # Structured outputs constrain the enum, but rendering must degrade gracefully
+    # (CSS_CLASS.get fallback) rather than KeyError on an out-of-vocabulary score.
+    r = load()
+    r["detailed"][0]["score"] = "Conditional Pass"
+    r["overview_table"][0]["result"] = "Conditional Pass"
+    r["tradeoff_summary"][0]["result"] = "Conditional Pass"
+    html = render_report.render_html(r, TEMPLATE)  # must not raise
+    assert "Conditional Pass" in html
