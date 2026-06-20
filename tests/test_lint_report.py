@@ -1,4 +1,4 @@
-import json, copy
+import json
 from pathlib import Path
 import lint_report
 

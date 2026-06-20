@@ -30,11 +30,11 @@ Build the evidence dossier conforming to `schemas/evidence-dossier.schema.json`.
 - User-supplied materials (from Stage 0)
 
 **Tagging requirements.** Every fact must be tagged with:
-- `source_type` — one of: `vendor_doc`, `api_reference`, `pricing`, `changelog`, `third_party`, `user_supplied`
-- `evidence_strength` — one of: `strong`, `moderate`, `weak`, `inferred`
-- `confidence` — numeric 0–1
+- `source_type` — one of: `vendor_docs` | `third_party` | `user_material` | `vendor_response`. The vendor's own product docs, API reference, pricing pages, and changelog are all `vendor_docs`; external analyst/practitioner/review coverage is `third_party`; materials supplied by the executive client are `user_material`; vendor answers ingested during a rebuttal pass are `vendor_response`.
+- `evidence_strength` — one of: `verified` | `vendor_claim` | `inferred` | `informative_absence` | `user_provided`. A vendor's marketing assertion or unverifiable sales claim is `vendor_claim` (never promote it to `verified` without independent corroboration); a conspicuous, documented silence across all expected surfaces is `informative_absence`. Do NOT use strong / moderate / weak.
+- `confidence` — one of: `high` | `medium` | `low`.
 
-**Absence-as-evidence rule.** Per `reference/framework-core.md`: a vendor's failure to document a capability (e.g., no mention of export formats, no published API schema) is itself weak-to-moderate evidence that the capability does not exist or is intentionally obscured. Record absences explicitly; do not leave them blank.
+**Absence-as-evidence rule.** Per `reference/framework-core.md`: a vendor's failure to document a capability (e.g., no mention of export formats, no published API schema) is itself evidence that the capability does not exist or is intentionally obscured — record it as `evidence_strength: informative_absence`. Record absences explicitly; do not leave them blank.
 
 ---
 
@@ -82,7 +82,7 @@ Run the drift-check protocol defined in `reference/drift-check.md`.
 
 The drift check verifies that each dimension result remains internally consistent with the evidence dossier and with each other — catching cases where a score was assigned without sufficient evidence, or where two dimensions contradict each other on the same fact.
 
-If any dimension result fails the drift check, re-run the affected `dimension-analyst` subagent with the same inputs plus an explicit note of the drift flag. Emit all flags in the final `report.json` under `drift_flags`.
+If any dimension result fails the drift check, re-run the affected `dimension-analyst` subagent with the same inputs plus an explicit note of the drift flag. Emit all flags in the final `report.json` under `flags` (valid `type` values: `insufficient`, `informative_absence`, `unverified_claim`, `low_confidence`, `org_context_dependent`).
 
 ---
 
@@ -96,7 +96,7 @@ If any dimension result fails the drift check, re-run the affected `dimension-an
 - Add or refine **org context** — updates the suitability line and Key Questions only; does not re-run dimension scoring.
 
 **What the exec may NOT do:**
-- Change a dimension score without supplying new evidence — decline this and log it as `client_disagreement` in the report.
+- Change a dimension score without supplying new evidence — decline this, note the client's disagreement in the Executive Summary prose, and hold the score on the evidence as scored. There is no structured `client_disagreement` field; the notation belongs in the executive summary paragraphs only.
 - Override a framework criterion or dimension definition — the Feedforward framework is immutable. If the exec believes a criterion is wrong, note the disagreement but do not alter the analysis.
 
 **Three operating modes:**
