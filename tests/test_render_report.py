@@ -97,3 +97,114 @@ def test_html_does_not_crash_on_unexpected_score():
     r["tradeoff_summary"][0]["result"] = "Conditional Pass"
     html = render_report.render_html(r, TEMPLATE)  # must not raise
     assert "Conditional Pass" in html
+
+
+# --- FIX 1: HTML escaping tests ---
+
+def test_html_escape_in_vendor_field():
+    r = load()
+    r["meta"]["vendor"] = '<script>x</script>'
+    html = render_report.render_html(r, TEMPLATE)
+    assert "&lt;script&gt;" in html
+    assert "<script>x</script>" not in html
+
+def test_html_escape_special_chars_in_dynamic_fields():
+    """Inject XSS payloads and HTML-breaking chars into dynamic fields; assert they are escaped."""
+    r = load()
+    payload_script = '<script>x</script>'
+    payload_amp = 'A & B'
+    payload_quote = '"quoted"'
+    # Inject into executive_summary fields
+    r["executive_summary"]["key_takeaway"] = payload_script
+    r["executive_summary"]["paragraphs"] = [payload_amp]
+    r["executive_summary"]["suitability"] = payload_quote
+    # Inject into a detailed dimension
+    r["detailed"][0]["assessment"] = payload_script + " Two sentences here."
+    r["detailed"][0]["trade_offs"]["gain"] = payload_amp
+    r["detailed"][0]["trade_offs"]["give_up"] = payload_quote
+    r["detailed"][0]["vendor_questions"][0] = payload_script
+    # Inject into tradeoff_summary
+    r["tradeoff_summary"][0]["gain"] = payload_script
+    r["tradeoff_summary"][0]["give_up"] = payload_amp
+    # Inject into overview focus_area
+    r["overview_table"][0]["focus_area"] = payload_amp
+    html = render_report.render_html(r, TEMPLATE)
+    assert "&lt;script&gt;" in html
+    assert "<script>x</script>" not in html
+    assert "&amp;" in html
+    assert "&quot;" in html
+
+def test_html_escape_in_questions_html():
+    """Vendor questions page also escapes injected content."""
+    r = load()
+    r["vendor_questions"][0]["question"] = '<script>x</script>'
+    r["vendor_questions"][0]["why_we_ask"] = 'A & B'
+    html = render_report.render_questions_html(r, TEMPLATE)
+    assert "&lt;script&gt;" in html
+    assert "<script>x</script>" not in html
+    assert "&amp;" in html
+
+def test_html_escape_in_changelog():
+    """Changelog change/evidence fields are escaped."""
+    r = load()
+    r["changelog"] = [{"dimension": "SEE", "change": '<script>x</script>', "evidence": "A & B"}]
+    html = render_report.render_html(r, TEMPLATE)
+    assert "&lt;script&gt;" in html
+    assert "<script>x</script>" not in html
+    assert "&amp;" in html
+
+
+# --- FIX 2: Table order tests ---
+
+def test_html_overview_table_renders_in_dim_order():
+    """overview_table renders in SEE→CHANGE→ADAPT→USE→LEARN→EXIT regardless of input order."""
+    import copy
+    r = load()
+    # Shuffle overview_table to reverse order
+    r["overview_table"] = list(reversed(r["overview_table"]))
+    html = render_report.render_html(r, TEMPLATE)
+    dims = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+    positions = [html.find(f"<td>{d}</td>") for d in dims]
+    # All should appear and be in ascending position order
+    assert all(p != -1 for p in positions), f"Not all dims found: {list(zip(dims, positions))}"
+    assert positions == sorted(positions), f"Overview table not in DIM_ORDER: {list(zip(dims, positions))}"
+
+def test_html_tradeoff_table_renders_in_dim_order():
+    """tradeoff_summary renders in SEE→CHANGE→ADAPT→USE→LEARN→EXIT regardless of input order."""
+    r = load()
+    # Shuffle tradeoff_summary to reverse order
+    r["tradeoff_summary"] = list(reversed(r["tradeoff_summary"]))
+    html = render_report.render_html(r, TEMPLATE)
+    dims = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+    # Find positions of each dimension in the tradeoff section
+    tradeoff_start = html.find("Trade-off Summary")
+    section = html[tradeoff_start:]
+    positions = [section.find(f"<td>{d}</td>") for d in dims]
+    assert all(p != -1 for p in positions), f"Not all dims found in tradeoff section: {list(zip(dims, positions))}"
+    assert positions == sorted(positions), f"Tradeoff table not in DIM_ORDER: {list(zip(dims, positions))}"
+
+def test_markdown_overview_table_renders_in_dim_order():
+    """Markdown overview table renders in DIM_ORDER regardless of input order."""
+    r = load()
+    r["overview_table"] = list(reversed(r["overview_table"]))
+    md = render_report.render_markdown(r)
+    overview_start = md.find("## Evaluation Overview")
+    detailed_start = md.find("## Detailed Evaluation")
+    overview_section = md[overview_start:detailed_start]
+    dims = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+    positions = [overview_section.find(f"| {d} |") for d in dims]
+    assert all(p != -1 for p in positions), f"Not all dims in overview: {list(zip(dims, positions))}"
+    assert positions == sorted(positions), f"Markdown overview not in DIM_ORDER"
+
+def test_markdown_tradeoff_table_renders_in_dim_order():
+    """Markdown tradeoff table renders in DIM_ORDER regardless of input order."""
+    r = load()
+    r["tradeoff_summary"] = list(reversed(r["tradeoff_summary"]))
+    md = render_report.render_markdown(r)
+    tradeoff_start = md.find("## Trade-off Summary")
+    key_start = md.find("## Key Questions")
+    tradeoff_section = md[tradeoff_start:key_start]
+    dims = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+    positions = [tradeoff_section.find(f"| {d} |") for d in dims]
+    assert all(p != -1 for p in positions), f"Not all dims in tradeoff: {list(zip(dims, positions))}"
+    assert positions == sorted(positions), f"Markdown tradeoff not in DIM_ORDER"

@@ -108,7 +108,7 @@ If any dimension result fails either flank or the immutability guard, re-run the
 | Mode | Behavior |
 |------|----------|
 | `gated` (default) | Present draft; finalize on any non-corrective reply (e.g., "looks good", "proceed") |
-| `one-shot` | Skip the review gate entirely; proceed directly to Stage 5 |
+| `one-shot` | Skip the review gate entirely; proceed directly to Stage 5. Requested by adding `--no-questions` to the evaluate request (e.g., "evaluate Conveo --no-questions") or by asking to skip clarification. |
 | `unattended` | Auto-finalize after approximately 10 minutes with no exec response (configurable via `review_gate_timeout_minutes`; default: 10). Useful for batch or overnight runs. |
 
 On corrections, re-run only the affected stages. Do not re-run the full pipeline unless evidence changes touch more than three dimensions.
@@ -138,7 +138,7 @@ The linter enforces tier-2 **semantic rules only** (schema conformance is guaran
 
 ## Vendor Rebuttal Loop
 
-When the exec supplies vendor answers to the Key Questions or Consolidated Vendor Questions, re-enter the pipeline as a **vendor response pass**.
+When the exec supplies vendor answers to the **Consolidated Vendor Questions**, re-enter the pipeline as a **vendor response pass**.
 
 **Process:**
 1. Ingest each vendor answer as evidence with `source_type: vendor_response`, then **adjudicate** it into one of five verdicts (this is an internal reasoning step — these verdict names are NOT schema field values): *substantive & verifiable*, *claim only*, *roadmap*, *non-responsive*, or *unanswered*. Record the resulting dossier fact with a valid `evidence_strength` enum value per the verdict: a verified substantive answer → `verified`; an unverifiable assertion (*claim only*) or a *roadmap*/future promise → `vendor_claim` (note roadmap items are not current capability); a *non-responsive* dodge → treat the documented silence as `informative_absence` where it confirms an undocumented affordance; an *unanswered* question → leave the gap open in `gaps`.

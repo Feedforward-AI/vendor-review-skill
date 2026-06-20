@@ -1,12 +1,19 @@
 """Render a Feedforward vendor-review report.json into Markdown + self-contained HTML."""
+import html as _html
 import json
 import sys
 from pathlib import Path
 
-DIM_ORDER = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+from _constants import DIM_ORDER
+
 DISPLAY = {"Pass": "Pass", "Partial": "Partial", "Fail": "Fail", "Insufficient": "Insufficient Information"}
 CSS_CLASS = {"Pass": "result-pass", "Partial": "result-partial",
              "Fail": "result-fail", "Insufficient": "result-insufficient"}
+
+
+def _e(value):
+    """HTML-escape a dynamic value."""
+    return _html.escape(str(value))
 
 
 def _result(r):
@@ -29,8 +36,11 @@ def render_markdown(report):
     out.append("## Evaluation Overview\n")
     out.append("| Criterion | Focus Area | Result |")
     out.append("|---|---|---|")
-    for row in report["overview_table"]:
-        out.append(f"| {row['dimension']} | {row['focus_area']} | {_result(row['result'])} |")
+    by_overview = {r["dimension"]: r for r in report["overview_table"]}
+    for dim in DIM_ORDER:
+        if dim in by_overview:
+            row = by_overview[dim]
+            out.append(f"| {row['dimension']} | {row['focus_area']} | {_result(row['result'])} |")
     out.append("")
 
     out.append("## Detailed Evaluation\n")
@@ -50,8 +60,11 @@ def render_markdown(report):
     out.append("## Trade-off Summary\n")
     out.append("| Criterion | Result | You Gain | You Give Up |")
     out.append("|---|---|---|---|")
-    for row in report["tradeoff_summary"]:
-        out.append(f"| {row['dimension']} | {_result(row['result'])} | {row['gain']} | {row['give_up']} |")
+    by_tradeoff = {r["dimension"]: r for r in report["tradeoff_summary"]}
+    for dim in DIM_ORDER:
+        if dim in by_tradeoff:
+            row = by_tradeoff[dim]
+            out.append(f"| {row['dimension']} | {_result(row['result'])} | {row['gain']} | {row['give_up']} |")
     out.append("")
 
     out.append("## Key Questions for Your Decision\n")
@@ -76,21 +89,24 @@ def _detail_html(report):
     for dim in DIM_ORDER:
         d = by_dim[dim]
         cls = CSS_CLASS.get(d["score"], "")
-        rows.append(f"<h3>{dim} — {d['focus_area']} "
+        rows.append(f"<h3>{_e(dim)} — {_e(d['focus_area'])} "
                     f"<span class='{cls}'>[{_result(d['score'])}]</span></h3>")
-        rows.append(f"<p>{d['assessment']}</p>")
-        rows.append(f"<p><span class='gain'>+ Gain:</span> {d['trade_offs']['gain']}<br>"
-                    f"<span class='giveup'>− Give up:</span> {d['trade_offs']['give_up']}</p>")
+        rows.append(f"<p>{_e(d['assessment'])}</p>")
+        rows.append(f"<p><span class='gain'>+ Gain:</span> {_e(d['trade_offs']['gain'])}<br>"
+                    f"<span class='giveup'>− Give up:</span> {_e(d['trade_offs']['give_up'])}</p>")
         rows.append("<p><strong>Questions for Vendor</strong></p><ul>"
-                    + "".join(f"<li>{q}</li>" for q in d["vendor_questions"]) + "</ul>")
+                    + "".join(f"<li>{_e(q)}</li>" for q in d["vendor_questions"]) + "</ul>")
     return "\n".join(rows)
 
 
 def _overview_html(report):
     body = ["<h2>Evaluation Overview</h2><table><tr><th>Criterion</th><th>Focus Area</th><th>Result</th></tr>"]
-    for row in report["overview_table"]:
-        body.append(f"<tr><td>{row['dimension']}</td><td>{row['focus_area']}</td>"
-                    f"<td class='{CSS_CLASS.get(row['result'], '')}'>{_result(row['result'])}</td></tr>")
+    by_overview = {r["dimension"]: r for r in report["overview_table"]}
+    for dim in DIM_ORDER:
+        if dim in by_overview:
+            row = by_overview[dim]
+            body.append(f"<tr><td>{_e(row['dimension'])}</td><td>{_e(row['focus_area'])}</td>"
+                        f"<td class='{CSS_CLASS.get(row['result'], '')}'>{_result(row['result'])}</td></tr>")
     body.append("</table>")
     return "".join(body)
 
@@ -98,11 +114,14 @@ def _overview_html(report):
 def _tradeoff_html(report):
     rows = ["<h2>Trade-off Summary</h2>"
             "<table><tr><th>Criterion</th><th>Result</th><th>You Gain</th><th>You Give Up</th></tr>"]
-    for row in report["tradeoff_summary"]:
-        cls = CSS_CLASS.get(row["result"], "")
-        rows.append(f"<tr><td>{row['dimension']}</td>"
-                    f"<td class='{cls}'>{_result(row['result'])}</td>"
-                    f"<td>{row['gain']}</td><td>{row['give_up']}</td></tr>")
+    by_tradeoff = {r["dimension"]: r for r in report["tradeoff_summary"]}
+    for dim in DIM_ORDER:
+        if dim in by_tradeoff:
+            row = by_tradeoff[dim]
+            cls = CSS_CLASS.get(row["result"], "")
+            rows.append(f"<tr><td>{_e(row['dimension'])}</td>"
+                        f"<td class='{cls}'>{_result(row['result'])}</td>"
+                        f"<td>{_e(row['gain'])}</td><td>{_e(row['give_up'])}</td></tr>")
     rows.append("</table>")
     return "\n".join(rows)
 
@@ -111,24 +130,24 @@ def render_html(report, template):
     es = report["executive_summary"]
     body = []
     body.append("<h2>Executive Summary</h2>")
-    body.append(f"<p><strong>KEY TAKEAWAY</strong> — {es['key_takeaway']}</p>")
+    body.append(f"<p><strong>KEY TAKEAWAY</strong> — {_e(es['key_takeaway'])}</p>")
     for p in es["paragraphs"]:
-        body.append(f"<p>{p}</p>")
-    body.append(f"<p>{es['suitability']}</p>")
+        body.append(f"<p>{_e(p)}</p>")
+    body.append(f"<p>{_e(es['suitability'])}</p>")
     body.append(_overview_html(report))
     body.append("<h2>Detailed Evaluation</h2>")
     body.append(_detail_html(report))
     body.append(_tradeoff_html(report))
     body.append("<h2>Key Questions for Your Decision</h2><ol>"
-                + "".join(f"<li>{q}</li>" for q in report["key_questions"]) + "</ol>")
+                + "".join(f"<li>{_e(q)}</li>" for q in report["key_questions"]) + "</ol>")
     if report.get("changelog"):
         body.append("<h2>What changed after vendor response</h2><ul>"
-                    + "".join(f"<li><strong>{c['dimension']}</strong>: {c['change']} ({c['evidence']})</li>"
+                    + "".join(f"<li><strong>{_e(c['dimension'])}</strong>: {_e(c['change'])} ({_e(c['evidence'])})</li>"
                               for c in report["changelog"]) + "</ul>")
     m = report["meta"]
     html = template
-    for tok, val in [("{{VENDOR}}", m["vendor"]), ("{{CATEGORY}}", m["category"]),
-                     ("{{VERSION}}", m["version"]), ("{{DATE}}", m["date"]),
+    for tok, val in [("{{VENDOR}}", _e(m["vendor"])), ("{{CATEGORY}}", _e(m["category"])),
+                     ("{{VERSION}}", _e(m["version"])), ("{{DATE}}", _e(m["date"])),
                      ("{{BODY}}", "\n".join(body))]:
         html = html.replace(tok, str(val))
     return html
@@ -137,15 +156,15 @@ def render_html(report, template):
 def render_questions_html(report, template):
     items = []
     for q in report["vendor_questions"]:
-        why = f"<br><em>{q['why_we_ask']}</em>" if q.get("why_we_ask") else ""
-        items.append(f"<li><strong>[{q['dimension']}]</strong> {q['question']}{why}</li>")
+        why = f"<br><em>{_e(q['why_we_ask'])}</em>" if q.get("why_we_ask") else ""
+        items.append(f"<li><strong>[{_e(q['dimension'])}]</strong> {_e(q['question'])}{why}</li>")
     body = ("<h2>Questions for the Vendor</h2>"
             "<p>Sharp, specific questions the vendor can respond to. Substantive answers may move the diagnosis.</p>"
             "<ol>" + "".join(items) + "</ol>")
     m = report["meta"]
     html = template
-    for tok, val in [("{{VENDOR}}", m["vendor"]), ("{{CATEGORY}}", m["category"]),
-                     ("{{VERSION}}", m["version"]), ("{{DATE}}", m["date"]), ("{{BODY}}", body)]:
+    for tok, val in [("{{VENDOR}}", _e(m["vendor"])), ("{{CATEGORY}}", _e(m["category"])),
+                     ("{{VERSION}}", _e(m["version"])), ("{{DATE}}", _e(m["date"])), ("{{BODY}}", body)]:
         html = html.replace(tok, str(val))
     return html
 
@@ -163,4 +182,7 @@ def main(report_path, out_dir):
 
 
 if __name__ == "__main__":
+    # Ensure scripts dir is on path for _constants import when run directly
+    import os
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     main(sys.argv[1], sys.argv[2])

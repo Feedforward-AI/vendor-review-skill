@@ -4,7 +4,7 @@ import re
 import sys
 from pathlib import Path
 
-DIM_ORDER = ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]
+from _constants import DIM_ORDER
 
 
 def _sentence_count(text):
@@ -47,10 +47,27 @@ def lint(report):
         if d.get("evidence_basis") == "informative_absence" and d.get("confidence") == "high":
             v.append(f"{dim}: informative_absence confidence is capped at medium, got high")
 
+    # Check overview_table: results must match detailed scores
     overview = {r["dimension"]: r["result"] for r in report.get("overview_table", [])}
     for dim, d in by_dim.items():
         if overview.get(dim) != d["score"]:
             v.append(f"{dim}: overview result '{overview.get(dim)}' != detailed score '{d['score']}'")
+
+    # Check overview_table dimension sequence equals DIM_ORDER
+    overview_dims = [r["dimension"] for r in report.get("overview_table", [])]
+    if overview_dims != DIM_ORDER:
+        v.append(f"overview_table dimension order must be {DIM_ORDER}, got {overview_dims}")
+
+    # Check tradeoff_summary: results must match detailed scores
+    tradeoff = {r["dimension"]: r["result"] for r in report.get("tradeoff_summary", [])}
+    for dim, d in by_dim.items():
+        if tradeoff.get(dim) != d["score"]:
+            v.append(f"{dim}: tradeoff_summary result '{tradeoff.get(dim)}' != detailed score '{d['score']}'")
+
+    # Check tradeoff_summary dimension sequence equals DIM_ORDER
+    tradeoff_dims = [r["dimension"] for r in report.get("tradeoff_summary", [])]
+    if tradeoff_dims != DIM_ORDER:
+        v.append(f"tradeoff_summary dimension order must be {DIM_ORDER}, got {tradeoff_dims}")
 
     return v
 
@@ -67,4 +84,7 @@ def main(report_path):
 
 
 if __name__ == "__main__":
+    # Ensure scripts dir is on path for _constants import when run directly
+    import os
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     main(sys.argv[1])
