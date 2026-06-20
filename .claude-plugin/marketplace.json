@@ -1,0 +1,16 @@
+{
+  "name": "feedforward",
+  "owner": { "name": "Feedforward", "url": "https://github.com/Feedforward-AI" },
+  "metadata": { "description": "Feedforward's AI-vendor capacity-evaluation tools." },
+  "plugins": [
+    {
+      "name": "vendor-review",
+      "description": "Evaluate an AI-powered software vendor against Feedforward's six-dimension framework for independent AI capacity (SEE/CHANGE/ADAPT/USE/LEARN/EXIT).",
+      "version": "0.1.0",
+      "author": { "name": "Feedforward", "url": "https://github.com/Feedforward-AI" },
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/Feedforward-AI/vendor-review-skill"
+    }
+  ]
+}
