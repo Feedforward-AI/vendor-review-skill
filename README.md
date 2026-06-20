@@ -20,12 +20,12 @@ The Feedforward framework evaluates vendors across six dimensions of independent
 
 | Code | Dimension | Core Question |
 |------|-----------|---------------|
-| **SEE** | Transparency & Observability | Can you see what the AI is doing and why? |
-| **CHANGE** | Model & Architecture Portability | Can you swap the underlying model or move off the platform? |
-| **ADAPT** | Customization Depth | Can you shape how the AI behaves for your context? |
-| **USE** | Workflow Integration | Does the tool teach AI fluency or replace the human? |
-| **LEARN** | Organizational Learning | Does adoption accelerate or impede your team's AI capability growth? |
-| **EXIT** | Data & Contract Portability | Can you leave and take your data and workflows with you? |
+| **SEE** | Transparency | Can you see the AI's mechanics — system prompts, model choice, retrieval, parameters? |
+| **CHANGE** | Customizability | Can you modify the AI layer — swap prompts and models, tune retrieval and parameters? |
+| **ADAPT** | Vendor Agility | Does the vendor keep pace with the AI frontier, or lock you to one provider's orbit? |
+| **USE** | Genuine Utility | Is the value real and differentiated, or commodity-model capability with a markup? |
+| **LEARN** | Transferable Knowledge | Does daily use build portable, generalizable AI fluency, or only skill at this one tool? |
+| **EXIT** | Portability | When you leave, does your institutional intelligence come with you, or is it trapped? |
 
 ---
 
