@@ -47,7 +47,7 @@ For each of the six dimensions — **SEE, CHANGE, ADAPT, USE, LEARN, EXIT** — 
 - `reference/dimensions/<dim>.md` — verbatim; provides the dimension-specific criteria, indicators, and pass/fail thresholds (e.g., `reference/dimensions/see.md`, `reference/dimensions/change.md`, `reference/dimensions/adapt.md`, `reference/dimensions/use.md`, `reference/dimensions/learn.md`, `reference/dimensions/exit.md`)
 - The evidence dossier from Stage 1
 
-**Output requirement.** Each analyst must return a `dimension-result` conforming to `schemas/dimension-result.schema.json`. Required fields include: `dimension`, `score` (Pass / Conditional Pass / Fail), `rationale`, `key_evidence`, `open_vendor_questions`, and `flags`.
+**Output requirement.** Each analyst must return a `dimension-result` conforming to `schemas/dimension-result.schema.json`. Required fields: `dimension`, `focus_area`, `score` (Pass / Partial / Fail / Insufficient), `assessment`, `trade_offs` (gain / give_up), `vendor_questions`, `confidence`, `evidence_basis`, `evidence_citations`.
 
 **Concurrency.** Run all six analysts concurrently. Do not wait for one before starting the next.
 
@@ -64,13 +64,13 @@ Using `reference/synthesis/executive-summary.md`, `reference/synthesis/key-quest
    - Overall sentiment (Positive / Cautious / Negative)
    - Suitability line — the only place org context is folded in (e.g., "For an organization at early AI maturity with low lock-in tolerance, this vendor presents material risk on EXIT and SEE")
 
-2. **Dimension Score Table** — SEE / CHANGE / ADAPT / USE / LEARN / EXIT with score and one-line rationale each
+2. **Dimension Score Table** — SEE / CHANGE / ADAPT / USE / LEARN / EXIT with each dimension's focus area and score
 
 3. **Trade-off Summary** — what the vendor does well vs. where it creates dependency or opacity
 
 4. **Key Questions** — per `reference/synthesis/key-questions.md`: open questions for the vendor, organized by dimension; org context may shape emphasis here but does not manufacture questions not grounded in evidence gaps
 
-5. **Consolidated Vendor Questions** — the full list of `open_vendor_questions` from all six dimension results, deduplicated and prioritized
+5. **Consolidated Vendor Questions** — the full list of `vendor_questions` from all six dimension results, deduplicated and prioritized
 
 **Output artifact.** Assemble `report.json` conforming to `schemas/report.schema.json`. This is the canonical artifact passed to subsequent stages.
 
@@ -128,7 +128,7 @@ Produces:
 ```
 scripts/lint_report.py <report.json>
 ```
-The linter checks schema conformance, required section presence, score-rationale alignment, and output completeness. **Fix all violations before delivering the report.** Do not deliver a report that fails linting.
+The linter checks schema conformance, required section presence, overview-table vs. detailed score alignment, and output completeness. **Fix all violations before delivering the report.** Do not deliver a report that fails linting.
 
 ---
 
@@ -138,7 +138,7 @@ When the exec supplies vendor answers to the Key Questions or Consolidated Vendo
 
 **Process:**
 1. Ingest all vendor answers as `vendor_response` evidence with `source_type: vendor_response`. Tag each answer as one of: `substantive_and_verifiable`, `claim_only`, `roadmap`, `non_responsive`, or `unanswered`.
-2. **Adjudication rule.** A dodge or non-responsive answer on a critical question can harden a Conditional Pass to Fail — silence is not neutral. A substantive, verifiable answer can upgrade a Fail or Conditional Pass if the evidence warrants it.
+2. **Adjudication rule.** A dodge or non-responsive answer on a critical question can harden a Partial to Fail — silence is not neutral. A substantive, verifiable answer can upgrade a Fail or Partial if the evidence warrants it.
 3. Re-run only the affected dimension analysts, then re-run synthesis and drift check.
 4. Bump the minor version (e.g., v1.0 → v1.1) in `report.json`.
 5. Add a **"What changed after vendor response"** section to the Executive Summary noting which scores changed, which remained unchanged despite vendor claims, and which questions remain open.
