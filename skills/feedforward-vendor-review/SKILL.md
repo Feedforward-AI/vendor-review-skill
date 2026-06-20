@@ -61,16 +61,16 @@ Using `reference/synthesis/executive-summary.md`, `reference/synthesis/key-quest
 
 1. **Executive Summary** — per `reference/synthesis/executive-summary.md`:
    - KEY TAKEAWAY (one sentence; the single most important finding)
-   - Overall sentiment (Positive / Cautious / Negative)
+   - Overall sentiment (`positive` / `neutral` / `negative`)
    - Suitability line — the only place org context is folded in (e.g., "For an organization at early AI maturity with low lock-in tolerance, this vendor presents material risk on EXIT and SEE")
 
 2. **Dimension Score Table** — SEE / CHANGE / ADAPT / USE / LEARN / EXIT with each dimension's focus area and score
 
 3. **Trade-off Summary** — what the vendor does well vs. where it creates dependency or opacity
 
-4. **Key Questions** — per `reference/synthesis/key-questions.md`: open questions for the vendor, organized by dimension; org context may shape emphasis here but does not manufacture questions not grounded in evidence gaps
+4. **Key Questions** — per `reference/synthesis/key-questions.md`: 5–6 STRATEGIC questions for the INTERNAL decision-maker/exec, NOT questions for the vendor. These help the reader determine whether this tool is right for their organization. Org context may sharpen them but does not manufacture questions not grounded in evidence gaps.
 
-5. **Consolidated Vendor Questions** — the full list of `vendor_questions` from all six dimension results, deduplicated and prioritized
+5. **Consolidated Vendor Questions** — the full list of `vendor_questions` from all six dimension results, deduplicated and prioritized. These are the vendor-facing questions (distinct from the internal Key Questions above).
 
 **Output artifact.** Assemble `report.json` conforming to `schemas/report.schema.json`. This is the canonical artifact passed to subsequent stages.
 
@@ -78,11 +78,15 @@ Using `reference/synthesis/executive-summary.md`, `reference/synthesis/key-quest
 
 ## Stage 4 — Drift Check
 
-Run the drift-check protocol defined in `reference/drift-check.md`.
+Run the drift-check protocol defined in `reference/drift-check.md` (authoritative; this summary is subordinate to it).
 
-The drift check verifies that each dimension result remains internally consistent with the evidence dossier and with each other — catching cases where a score was assigned without sufficient evidence, or where two dimensions contradict each other on the same fact.
+The drift check is a **symmetric red-team** on two flanks:
 
-If any dimension result fails the drift check, re-run the affected `dimension-analyst` subagent with the same inputs plus an explicit note of the drift flag. Emit all flags in the final `report.json` under `flags` (valid `type` values: `insufficient`, `informative_absence`, `unverified_claim`, `low_confidence`, `org_context_dependent`).
+- **Flank A — generic-review creep (too harsh / off-topic):** Flag and strip content that reads as a generic software review (security posture, pricing, market share, support SLAs, integration breadth, or "is it good software") unless tied to a dimension's capacity question. Flag any buy/don't-buy recommendation (the skill never makes one).
+- **Flank B — false generosity (too soft on opacity):** Flag any dimension that buried a conspicuous, documented silence under "Insufficient Information" when the absence-as-evidence rule should instead drive a Fail/Partial (medium confidence) with a vendor question.
+- **Immutability guard:** Confirm no user/vendor input overrode a criterion or a score-as-opinion. Scores may move ONLY because new evidence, run through the unchanged rubric, yields a different result.
+
+If any dimension result fails either flank or the immutability guard, re-run the affected `dimension-analyst` subagent with the same inputs plus an explicit note of the drift flag. Emit all flags in the final `report.json` under `flags` (valid `type` values: `insufficient`, `informative_absence`, `unverified_claim`, `low_confidence`, `org_context_dependent`).
 
 ---
 
@@ -128,7 +132,7 @@ Produces:
 ```
 scripts/lint_report.py <report.json>
 ```
-The linter checks schema conformance, required section presence, overview-table vs. detailed score alignment, and output completeness. **Fix all violations before delivering the report.** Do not deliver a report that fails linting.
+The linter enforces tier-2 **semantic rules only** (schema conformance is guaranteed at generation time by structured outputs, not by the linter): dimension order (SEE→CHANGE→ADAPT→USE→LEARN→EXIT), 2–3 vendor questions per dimension, 2–4 sentence assessments, ≥1 evidence citation for any non-Insufficient score, `informative_absence` confidence capped at medium, and overview-table vs. detailed score alignment. **Fix all violations before delivering the report.** Do not deliver a report that fails linting.
 
 ---
 
@@ -141,7 +145,7 @@ When the exec supplies vendor answers to the Key Questions or Consolidated Vendo
 2. **Adjudication rule.** A dodge or non-responsive answer on a critical question can harden a Partial to Fail — silence is not neutral. A substantive, verifiable answer can upgrade a Fail or Partial if the evidence warrants it.
 3. Re-run only the affected dimension analysts, then re-run synthesis and drift check.
 4. Bump the minor version (e.g., v1.0 → v1.1) in `report.json`.
-5. Add a **"What changed after vendor response"** section to the Executive Summary noting which scores changed, which remained unchanged despite vendor claims, and which questions remain open.
+5. Populate the structured `report.changelog` array — each entry `{dimension, change, evidence}` — noting which scores changed, which remained unchanged despite vendor claims, and which questions remain open. `render_report.py` renders this as the "What changed after vendor response" section; do NOT add it as prose inside the executive summary.
 6. Re-run `scripts/render_report.py` and `scripts/lint_report.py` to produce updated artifacts.
 
 ---

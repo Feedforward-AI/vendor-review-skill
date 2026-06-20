@@ -64,12 +64,18 @@ Rules:
 
 ## 5. Trade-off Summary
 
-Content: Concise enumeration of the primary trade-offs the reader must weigh.
+Content: A six-row table — one row per dimension — summarising the core trade-off for each criterion.
+
+Columns: **Criterion | Result | You Gain | You Give Up**
+
+Rows (in this exact order): SEE, CHANGE, ADAPT, USE, LEARN, EXIT
 
 Rules:
-- 3–5 bullet points.
-- Each bullet frames a genuine tension (e.g., immediate productivity vs. long-term capability building).
+- Exactly six rows; one per dimension; no extra rows or bullets.
+- Result uses canonical vocabulary: Pass / Partial / Fail / Insufficient.
+- "You Gain" and "You Give Up" are concise noun phrases drawn from the dimension's `trade_offs` fields.
 - Do not advocate; surface the trade-offs neutrally.
+- This table is the `tradeoff_summary` array in `report.schema.json` and is rendered as a 4-column table by `render_report.py`.
 
 ---
 
