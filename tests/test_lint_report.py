@@ -37,26 +37,14 @@ def test_detects_overview_score_mismatch():
 
 # --- _sentence_count robustness tests ---
 
-def test_sentence_count_not_inflated_by_url():
-    # "Access docs.vendor.com/api requires admin." is 1 sentence containing a URL-like token
-    # Combined with a second real sentence → 2 sentences → should NOT be flagged
-    text = "Access docs.vendor.com/api requires admin. You must have the correct role assigned."
-    count = lint_report._sentence_count(text)
-    assert 2 <= count <= 4, f"Expected 2-4 but got {count}"
+def test_sentence_count_ignores_false_terminators():
+    assert lint_report._sentence_count("Uses RAG, e.g. retrieval augmentation. This improves quality.") == 2
+    assert lint_report._sentence_count("Access docs.vendor.com/api requires admin. They run v1.0 of the model. Uses RAG, i.e. retrieval.") == 3
+    assert lint_report._sentence_count("Operates in the U.S. market only.") == 1
 
-def test_sentence_count_not_inflated_by_version():
-    # "They run v1.0 of the model." contains a decimal/version but is 1 sentence
-    # Add a second real sentence to make it legitimately 2
-    text = "They run v1.0 of the model. Performance is consistent across regions."
-    count = lint_report._sentence_count(text)
-    assert 2 <= count <= 4, f"Expected 2-4 but got {count}"
-
-def test_sentence_count_not_inflated_by_abbreviation():
-    # "Uses RAG, e.g. retrieval." — the "e.g." should not split into an extra sentence
-    # Add more real sentences to reach a valid 2-4 range
-    text = "Uses RAG, e.g. retrieval augmentation. This improves answer quality significantly. The model performance is measurable."
-    count = lint_report._sentence_count(text)
-    assert 2 <= count <= 4, f"Expected 2-4 but got {count}"
+def test_sentence_count_still_counts_real_sentences():
+    assert lint_report._sentence_count("One. Two. Three. Four. Five.") == 5
+    assert lint_report._sentence_count("Only one sentence here.") == 1
 
 def test_sentence_count_too_few_still_detected():
     # A single short sentence should still count as 1 (below the 2 minimum)
