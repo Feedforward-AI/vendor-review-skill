@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dimension", "focus_area", "score", "assessment", "trade_offs",
+               "vendor_questions", "confidence", "evidence_basis", "evidence_citations"],
+  "properties": {
+    "dimension": {"enum": ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]},
+    "focus_area": {"type": "string"},
+    "score": {"enum": ["Pass", "Partial", "Fail", "Insufficient"]},
+    "assessment": {"type": "string"},
+    "trade_offs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["gain", "give_up"],
+      "properties": {"gain": {"type": "string"}, "give_up": {"type": "string"}}
+    },
+    "vendor_questions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "confidence": {"enum": ["high", "medium", "low"]},
+    "evidence_basis": {"enum": ["verified", "vendor_claim", "inferred", "informative_absence", "user_provided", "insufficient"]},
+    "evidence_citations": {"type": "array", "items": {"type": "string"}}
+  }
+}
