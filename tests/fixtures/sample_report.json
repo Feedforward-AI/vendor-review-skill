@@ -1,0 +1,239 @@
+{
+  "meta": {
+    "vendor": "Glean",
+    "category": "Enterprise AI Search",
+    "version": "v1.0",
+    "date": "2026-06-20",
+    "sentiment": "negative"
+  },
+  "executive_summary": {
+    "key_takeaway": "Glean delivers strong day-one search utility but scores Fail on three of six dimensions, primarily due to opacity in its knowledge-graph construction, inability to build transferable AI skills, and severe data-portability constraints at exit.",
+    "paragraphs": [
+      "Glean's proprietary knowledge graph accelerates enterprise search and surfaces cross-application context that no single-app search tool can match. However, the system offers minimal transparency into how the graph is built, ranked, and personalised, making it difficult to audit relevance failures or understand why particular results appear.",
+      "Customisation latitude is narrow: customers can tune connectors and permissions but cannot extend the retrieval model or inject domain-specific ranking signals. Vendor agility is partially satisfactory — Glean ships quarterly model refreshes and announced an agent platform, though production readiness for agentic workflows is unconfirmed. Genuine search utility for knowledge workers is clearly demonstrated across multiple independent case studies."
+    ],
+    "suitability": "Glean is suitable for organisations that prioritise immediate search productivity over long-term AI skill development and are comfortable with single-vendor dependency on an opaque graph. Organisations building internal AI capability or facing strict data-sovereignty requirements should proceed with caution."
+  },
+  "overview_table": [
+    {"dimension": "SEE", "focus_area": "Transparency & Explainability", "result": "Fail"},
+    {"dimension": "CHANGE", "focus_area": "Customisability & Configuration", "result": "Partial"},
+    {"dimension": "ADAPT", "focus_area": "Vendor Agility & Roadmap", "result": "Partial"},
+    {"dimension": "USE", "focus_area": "Genuine Utility", "result": "Pass"},
+    {"dimension": "LEARN", "focus_area": "Transferable Knowledge", "result": "Fail"},
+    {"dimension": "EXIT", "focus_area": "Portability & Exit Risk", "result": "Fail"}
+  ],
+  "detailed": [
+    {
+      "dimension": "SEE",
+      "focus_area": "Transparency & Explainability",
+      "score": "Fail",
+      "assessment": "Glean's knowledge graph is built and ranked through proprietary machine-learning pipelines that are not documented for customers. Relevance signals, personalisation weights, and graph-edge construction logic are treated as trade secrets, leaving administrators unable to diagnose ranking failures or confirm that sensitive content is genuinely excluded. Audit logs cover connector sync events but do not expose retrieval-time decisions, so there is no mechanism to verify that results reflect declared permission boundaries.",
+      "trade_offs": {
+        "gain": "A sophisticated, continuously updated knowledge graph that surfaces cross-application context without manual curation.",
+        "give_up": "Ability to inspect, audit, or explain why specific results surface or are suppressed; regulatory auditability of AI-driven retrieval decisions."
+      },
+      "vendor_questions": [
+        "Can you provide a technical whitepaper describing how knowledge-graph edges are constructed and what signals drive result ranking?",
+        "What audit artifacts are available at retrieval time to demonstrate that permission-trimmed content was not surfaced to unauthorised users?",
+        "Do you offer an explainability mode — even in a staging environment — that exposes feature weights for individual search results?"
+      ],
+      "confidence": "high",
+      "evidence_basis": "verified",
+      "evidence_citations": [
+        "Glean product documentation (2025): connector configuration guide — no retrieval-model parameters exposed",
+        "Glean trust portal (2026-Q1): audit log schema covers sync events, not query-time decisions",
+        "Independent analyst review, Forrester Wave: Enterprise Search Q4 2025 — notes opacity as a key limitation"
+      ]
+    },
+    {
+      "dimension": "CHANGE",
+      "focus_area": "Customisability & Configuration",
+      "score": "Partial",
+      "assessment": "Glean allows administrators to configure data-source connectors, set permission mappings, and apply basic result-pinning for promoted content. However, the core retrieval model and ranking pipeline are closed: customers cannot supply custom embeddings, add domain-specific vocabulary, or weight content types beyond coarse admin toggles. The recently announced Glean Apps feature enables lightweight workflow automation on top of search, but does not extend the underlying ranking or graph model.",
+      "trade_offs": {
+        "gain": "Rapid connector deployment across 100+ SaaS applications with minimal engineering effort.",
+        "give_up": "Ability to inject domain-specific ranking signals, train on proprietary corpora, or extend the retrieval model for specialised use cases."
+      },
+      "vendor_questions": [
+        "Is there a public API or SDK that allows customers to supply custom embedding vectors or reranking signals to supplement the default knowledge graph?",
+        "What configuration parameters, beyond connector setup and permission mapping, are exposed for customers who need domain-specific relevance tuning?"
+      ],
+      "confidence": "high",
+      "evidence_basis": "verified",
+      "evidence_citations": [
+        "Glean developer documentation (2025): connector SDK reference — covers ingestion only, no retrieval API",
+        "Glean product announcement (2026-Q1): Glean Apps — workflow automation layer, not retrieval customisation"
+      ]
+    },
+    {
+      "dimension": "ADAPT",
+      "focus_area": "Vendor Agility & Roadmap",
+      "score": "Partial",
+      "assessment": "Glean ships quarterly model updates and has publicly announced an agentic platform for 2026. The vendor has demonstrated willingness to respond to enterprise customer requests for connector coverage and has a documented SLA for uptime. However, the agentic roadmap is early-stage with no confirmed general availability date, and significant product pivots (such as the transition from pure search to agent orchestration) introduce uncertainty about pricing and service-tier stability.",
+      "trade_offs": {
+        "gain": "Regular model refreshes and a growing connector ecosystem managed entirely by the vendor, reducing internal maintenance burden.",
+        "give_up": "Predictability of roadmap timing and pricing; control over the pace and direction of capability changes affecting internal workflows."
+      },
+      "vendor_questions": [
+        "What is the committed general availability date for the Glean Agents platform and what SLA will govern it?",
+        "How are pricing changes communicated ahead of contract renewal when new capability tiers are introduced?"
+      ],
+      "confidence": "medium",
+      "evidence_basis": "informative_absence",
+      "evidence_citations": [
+        "Glean roadmap webinar (2025-11): agent platform previewed but GA date not provided",
+        "Glean enterprise agreement template (2025): SLA covers uptime; no roadmap-commitment clause"
+      ]
+    },
+    {
+      "dimension": "USE",
+      "focus_area": "Genuine Utility",
+      "score": "Pass",
+      "assessment": "Multiple independent customer case studies and analyst references confirm that Glean reduces time-to-answer for knowledge workers across document retrieval, people-search, and meeting-context use cases. Internal pilot data from comparable enterprises shows measurable productivity uplift within the first 90 days of deployment. The product addresses a genuine friction point — cross-application search — that existing single-app tools do not solve.",
+      "trade_offs": {
+        "gain": "Demonstrable productivity improvement for knowledge workers through unified cross-application search and meeting-context surfacing.",
+        "give_up": "Dependency on Glean's index freshness and connector reliability; users may over-trust search results for compliance-sensitive content."
+      },
+      "vendor_questions": [
+        "Can you share anonymised time-to-answer benchmarks from customers in comparable industries, broken down by content type and connector?",
+        "What safeguards prevent users from treating Glean results as authoritative for compliance or legal decisions?"
+      ],
+      "confidence": "high",
+      "evidence_basis": "verified",
+      "evidence_citations": [
+        "Glean customer case study: Okta (2025) — 40% reduction in internal support ticket deflection time",
+        "Gartner peer insights: Glean, average rating 4.3/5 across 87 reviews (accessed 2026-05)",
+        "Internal pilot evaluation report, comparable enterprise (2025-Q3) — provided by reference customer under NDA"
+      ]
+    },
+    {
+      "dimension": "LEARN",
+      "focus_area": "Transferable Knowledge",
+      "score": "Fail",
+      "assessment": "Using Glean does not build transferable AI or ML skills in the organisation's team because the system abstracts all model behaviour behind a managed SaaS interface. Administrators learn to configure connectors and manage permissions, but these are Glean-specific competencies with no broader applicability to AI engineering or retrieval-augmented generation. Staff who interact with Glean as end users gain no exposure to prompt design, embedding tuning, or knowledge-graph principles.",
+      "trade_offs": {
+        "gain": "Zero internal ML maintenance overhead; the vendor handles all model complexity.",
+        "give_up": "Any development of internal AI literacy, retrieval-engineering skills, or institutional knowledge about how the organisation's own information landscape is structured."
+      },
+      "vendor_questions": [
+        "Do you offer training programmes or certification paths that build customers' internal AI search competency beyond Glean-specific administration?",
+        "Is there a data-export mechanism that surfaces the knowledge-graph structure so customers can learn from it or replicate it elsewhere?"
+      ],
+      "confidence": "high",
+      "evidence_basis": "verified",
+      "evidence_citations": [
+        "Glean admin documentation (2025): administrator role covers connector management and permission sync only — no model interaction",
+        "Glean learning centre (2026): available certifications are Glean Administrator and Glean Power User — no transferable AI curriculum"
+      ]
+    },
+    {
+      "dimension": "EXIT",
+      "focus_area": "Portability & Exit Risk",
+      "score": "Fail",
+      "assessment": "Glean's value is concentrated in its proprietary knowledge graph, which is not exportable. At contract end, customers lose access to the graph, the indexed content relationships, and all personalization signals accumulated over the contract term. Source documents remain in their original systems (OneDrive, Confluence, etc.) but the cross-application relationships, relevance tuning, and search history are not portable. Switching costs include re-indexing time, workflow retraining, and the inability to transfer any Glean-specific configuration to a competing platform.",
+      "trade_offs": {
+        "gain": "No up-front indexing investment required; Glean builds and maintains the graph on the customer's behalf.",
+        "give_up": "Any accumulated graph intelligence or relationship data at contract end; practical switching costs rise with tenure."
+      },
+      "vendor_questions": [
+        "What data can customers export at contract termination — specifically, can the knowledge-graph edges, relevance signals, or personalisation weights be exported in a portable format?",
+        "What is the typical re-indexing time for a comparable enterprise if migrating to an alternative search platform, and does Glean offer transition support?"
+      ],
+      "confidence": "high",
+      "evidence_basis": "verified",
+      "evidence_citations": [
+        "Glean enterprise agreement (2025), Section 9 — data return clause covers source-connector credentials only; graph data not included",
+        "Glean data processing addendum (2025): customer data definition excludes derived graph artefacts"
+      ]
+    }
+  ],
+  "tradeoff_summary": [
+    {
+      "dimension": "SEE",
+      "result": "Fail",
+      "gain": "Sophisticated cross-application knowledge graph surfacing relevant content automatically.",
+      "give_up": "Transparency into ranking, retrieval logic, and auditability of permission enforcement."
+    },
+    {
+      "dimension": "CHANGE",
+      "result": "Partial",
+      "gain": "Rapid connector deployment across 100+ SaaS applications.",
+      "give_up": "Domain-specific ranking customisation and retrieval-model extensibility."
+    },
+    {
+      "dimension": "ADAPT",
+      "result": "Partial",
+      "gain": "Regular model updates and growing connector ecosystem with low internal overhead.",
+      "give_up": "Roadmap predictability and pricing stability as the product evolves toward agent orchestration."
+    },
+    {
+      "dimension": "USE",
+      "result": "Pass",
+      "gain": "Measurable productivity uplift for knowledge workers through unified search.",
+      "give_up": "Risk of over-reliance on opaque results for compliance-sensitive decisions."
+    },
+    {
+      "dimension": "LEARN",
+      "result": "Fail",
+      "gain": "Zero internal ML maintenance burden.",
+      "give_up": "Any development of transferable AI literacy or retrieval-engineering capability."
+    },
+    {
+      "dimension": "EXIT",
+      "result": "Fail",
+      "gain": "No up-front indexing investment; vendor-managed graph construction.",
+      "give_up": "Accumulated graph intelligence and cross-application relationship data at contract end."
+    }
+  ],
+  "key_questions": [
+    "Can Glean provide retrieval-time audit artifacts sufficient to meet our data-governance and regulatory requirements?",
+    "Is the organisation prepared to accept that using Glean will not build transferable AI engineering skills internally?",
+    "What is the realistic exit cost — in time, money, and lost graph intelligence — if we switch vendors after three years?",
+    "Does the productivity gain from day-one search utility justify the long-term dependency on an opaque, non-portable knowledge graph?",
+    "Are the announced agentic capabilities likely to reach production readiness within our planning horizon?"
+  ],
+  "vendor_questions": [
+    {
+      "id": "VQ-SEE-01",
+      "dimension": "SEE",
+      "question": "Please provide a technical whitepaper or architectural overview that describes how knowledge-graph edges are constructed, what signals drive result ranking, and how permission boundaries are enforced at retrieval time.",
+      "why_we_ask": "Our data-governance policy requires that AI-driven retrieval systems be auditable. Without understanding the ranking model, we cannot confirm that permission-trimmed content is never surfaced to unauthorised users.",
+      "current_basis": "Glean's public documentation covers connector configuration and sync events but does not expose any retrieval-model parameters or graph-construction logic.",
+      "what_would_change": "A detailed technical whitepaper or third-party audit confirming retrieval-time permission enforcement would move SEE from Fail to Partial or Pass."
+    },
+    {
+      "id": "VQ-EXIT-01",
+      "dimension": "EXIT",
+      "question": "At contract termination, what data exactly can we export? Specifically: can knowledge-graph edges, relevance signals, personalisation weights, or search-history analytics be exported in an open format such as JSON-LD or Parquet?",
+      "why_we_ask": "The proprietary knowledge graph is Glean's primary value-add. If it cannot be exported, switching costs escalate significantly with tenure, creating a de-facto lock-in that is not reflected in the contract price.",
+      "current_basis": "The enterprise agreement data-return clause covers source-connector credentials only; the data processing addendum explicitly excludes derived graph artefacts from the customer data definition.",
+      "what_would_change": "Confirmation that graph artefacts can be exported in an open format, or a contractual commitment to a transition-assistance period with re-indexing support, would improve the EXIT score to Partial."
+    },
+    {
+      "id": "VQ-LEARN-01",
+      "dimension": "LEARN",
+      "question": "Does Glean offer any training programme, curriculum, or tooling that builds customers' internal competency in AI search, retrieval-augmented generation, or knowledge-graph design — beyond Glean-specific administration certification?",
+      "why_we_ask": "A core organisational objective is to build internal AI engineering capacity. If Glean abstracts all model complexity, we need to understand whether engagement with the platform can contribute to that goal in any way.",
+      "current_basis": "Available certifications are Glean Administrator and Glean Power User; neither covers transferable AI or ML concepts.",
+      "what_would_change": "A structured internal AI curriculum, access to graph-construction APIs for learning purposes, or partnerships with AI training providers would move LEARN from Fail to Partial."
+    }
+  ],
+  "flags": [
+    {
+      "dimension": "OVERALL",
+      "type": "org_context_dependent",
+      "note": "The significance of the LEARN and EXIT failures depends heavily on organisational context: enterprises with a strategic AI capability-building mandate will weight these heavily, while those prioritising immediate productivity may find the USE Pass sufficient to justify adoption."
+    },
+    {
+      "dimension": "SEE",
+      "type": "unverified_claim",
+      "note": "Glean's sales materials claim SOC 2 Type II certification covers retrieval-time permission enforcement, but the publicly available audit scope does not confirm this; the claim should be verified with the third-party auditor's scope documentation."
+    },
+    {
+      "dimension": "ADAPT",
+      "type": "low_confidence",
+      "note": "The ADAPT Partial score rests partly on the announced agentic roadmap; if the GA date slips beyond 2026 or pricing changes materially, this score should be revisited."
+    }
+  ],
+  "changelog": []
+}
