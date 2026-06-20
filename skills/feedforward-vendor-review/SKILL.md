@@ -34,7 +34,7 @@ Build the evidence dossier conforming to `schemas/evidence-dossier.schema.json`.
 - `evidence_strength` — one of: `verified` | `vendor_claim` | `inferred` | `informative_absence` | `user_provided`. A vendor's marketing assertion or unverifiable sales claim is `vendor_claim` (never promote it to `verified` without independent corroboration); a conspicuous, documented silence across all expected surfaces is `informative_absence`. Do NOT use strong / moderate / weak.
 - `confidence` — one of: `high` | `medium` | `low`.
 
-**Absence-as-evidence rule.** Per `reference/framework-core.md`: a vendor's failure to document a capability (e.g., no mention of export formats, no published API schema) is itself evidence that the capability does not exist or is intentionally obscured — record it as `evidence_strength: informative_absence`. Record absences explicitly; do not leave them blank.
+**Absence-as-evidence rule (per `reference/framework-core.md` — authoritative).** Distinguish a *true gap* from a *conspicuous absence*; do not tag every undocumented capability as `informative_absence`. When you find no positive evidence for a capability, ask whether you checked the surfaces where it *would* appear if it existed (API reference, admin/console docs, security whitepaper, settings UI). If it is absent across all those expected surfaces, record it as `evidence_strength: informative_absence`, with those surfaces named in `expectation_set`, `confidence` capped at `medium`, stated as an explicit inference, and a confirming question raised for the vendor. If you could not check the expected surfaces, or the capability could plausibly exist undocumented, treat it as a true gap: record it in `gaps` (it scores `Insufficient`), not as `informative_absence`.
 
 ---
 
