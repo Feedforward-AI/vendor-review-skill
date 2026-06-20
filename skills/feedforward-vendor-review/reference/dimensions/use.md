@@ -20,4 +20,4 @@ Provide:
 3\. 2-3 specific questions to ask the vendor if gaps exist
 
 ## Output contract
-Assess ONLY this dimension, ONLY through the one question (build or erode independent AI capacity). This is NOT a generic software review — do not comment on security, pricing, market share, or support SLAs except where they bear on this dimension's capacity question. Marketing claims are not evidence. Cite every claim to a dossier fact id. Return exactly the `dimension-result` schema.
+Assess the genuine utility described above on its own terms, then judge what that utility means for the organization's ability to build independent, generalizable AI capacity — value that is mainly commodity foundation-model capability with a markup is a capacity risk, while genuinely differentiated, defensible utility is more supportive. This is NOT a generic software review — do not comment on security, pricing, market share, or support SLAs except where they bear on this dimension's capacity question. Marketing claims are not evidence. Cite every claim to a dossier fact id. Return exactly the `dimension-result` schema.
