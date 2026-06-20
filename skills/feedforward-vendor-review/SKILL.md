@@ -141,19 +141,9 @@ The linter enforces tier-2 **semantic rules only** (schema conformance is guaran
 When the exec supplies vendor answers to the Key Questions or Consolidated Vendor Questions, re-enter the pipeline as a **vendor response pass**.
 
 **Process:**
-1. Ingest all vendor answers as `vendor_response` evidence with `source_type: vendor_response`. Tag each answer as one of: `substantive_and_verifiable`, `claim_only`, `roadmap`, `non_responsive`, or `unanswered`.
+1. Ingest each vendor answer as evidence with `source_type: vendor_response`, then **adjudicate** it into one of five verdicts (this is an internal reasoning step — these verdict names are NOT schema field values): *substantive & verifiable*, *claim only*, *roadmap*, *non-responsive*, or *unanswered*. Record the resulting dossier fact with a valid `evidence_strength` enum value per the verdict: a verified substantive answer → `verified`; an unverifiable assertion (*claim only*) or a *roadmap*/future promise → `vendor_claim` (note roadmap items are not current capability); a *non-responsive* dodge → treat the documented silence as `informative_absence` where it confirms an undocumented affordance; an *unanswered* question → leave the gap open in `gaps`.
 2. **Adjudication rule.** A dodge or non-responsive answer on a critical question can harden a Partial to Fail — silence is not neutral. A substantive, verifiable answer can upgrade a Fail or Partial if the evidence warrants it.
 3. Re-run only the affected dimension analysts, then re-run synthesis and drift check.
 4. Bump the minor version (e.g., v1.0 → v1.1) in `report.json`.
 5. Populate the structured `report.changelog` array — each entry `{dimension, change, evidence}` — noting which scores changed, which remained unchanged despite vendor claims, and which questions remain open. `render_report.py` renders this as the "What changed after vendor response" section; do NOT add it as prose inside the executive summary.
 6. Re-run `scripts/render_report.py` and `scripts/lint_report.py` to produce updated artifacts.
-
----
-
-## Optional Workflow Accelerator
-
-Power users who prefer a deterministic, script-driven run may invoke:
-```
-workflow/evaluate-vendor.workflow.js
-```
-via the Workflow tool. This workflow encodes the same stage sequence above as an explicit, reproducible execution graph. The steps above remain the authoritative default; the workflow is an accelerator, not a replacement.
