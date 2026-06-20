@@ -1,0 +1,6 @@
+{
+  "vendor": "Harvey",
+  "scores": {"SEE": "Partial", "CHANGE": "Fail", "ADAPT": "Partial",
+             "USE": "Partial", "LEARN": "Partial", "EXIT": "Partial"},
+  "themes": ["OpenAI", "single-vendor"]
+}

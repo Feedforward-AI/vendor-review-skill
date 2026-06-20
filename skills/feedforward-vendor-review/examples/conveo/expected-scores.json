@@ -1,0 +1,6 @@
+{
+  "vendor": "Conveo",
+  "scores": {"SEE": "Fail", "CHANGE": "Fail", "ADAPT": "Partial",
+             "USE": "Partial", "LEARN": "Fail", "EXIT": "Partial"},
+  "themes": ["No expertise"]
+}
