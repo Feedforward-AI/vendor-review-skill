@@ -52,3 +52,38 @@ def test_questions_html_standalone():
     html = render_report.render_questions_html(load(), TEMPLATE)
     assert "Questions for the Vendor" in html
     assert load()["vendor_questions"][0]["question"] in html
+
+def test_html_has_tradeoff_summary_table():
+    r = load()
+    html = render_report.render_html(r, TEMPLATE)
+    assert "Trade-off Summary" in html
+    # At least one give_up value from the fixture must appear
+    assert r["tradeoff_summary"][0]["give_up"] in html
+    # All six dimension rows should be present
+    for row in r["tradeoff_summary"]:
+        assert row["dimension"] in html
+
+def test_html_tradeoff_table_appears_after_detailed_before_key_questions():
+    r = load()
+    html = render_report.render_html(r, TEMPLATE)
+    pos_detail = html.find("Detailed Evaluation")
+    pos_tradeoff = html.find("Trade-off Summary")
+    pos_key = html.find("Key Questions for Your Decision")
+    assert pos_detail != -1 and pos_tradeoff != -1 and pos_key != -1
+    assert pos_detail < pos_tradeoff < pos_key
+
+def test_html_changelog_section_rendered():
+    r = load()
+    r["changelog"] = [
+        {"dimension": "SEE", "change": "Score upgraded from Fail to Partial.", "evidence": "VQ-SEE-01 response"}
+    ]
+    html = render_report.render_html(r, TEMPLATE)
+    assert "What changed after vendor response" in html
+    assert "Score upgraded from Fail to Partial." in html
+    assert "VQ-SEE-01 response" in html
+
+def test_html_no_changelog_section_when_empty():
+    r = load()
+    r["changelog"] = []
+    html = render_report.render_html(r, TEMPLATE)
+    assert "What changed after vendor response" not in html

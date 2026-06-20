@@ -95,6 +95,18 @@ def _overview_html(report):
     return "".join(body)
 
 
+def _tradeoff_html(report):
+    rows = ["<h2>Trade-off Summary</h2>"
+            "<table><tr><th>Criterion</th><th>Result</th><th>You Gain</th><th>You Give Up</th></tr>"]
+    for row in report["tradeoff_summary"]:
+        cls = CSS_CLASS.get(row["result"], "")
+        rows.append(f"<tr><td>{row['dimension']}</td>"
+                    f"<td class='{cls}'>{_result(row['result'])}</td>"
+                    f"<td>{row['gain']}</td><td>{row['give_up']}</td></tr>")
+    rows.append("</table>")
+    return "\n".join(rows)
+
+
 def render_html(report, template):
     es = report["executive_summary"]
     body = []
@@ -106,8 +118,13 @@ def render_html(report, template):
     body.append(_overview_html(report))
     body.append("<h2>Detailed Evaluation</h2>")
     body.append(_detail_html(report))
+    body.append(_tradeoff_html(report))
     body.append("<h2>Key Questions for Your Decision</h2><ol>"
                 + "".join(f"<li>{q}</li>" for q in report["key_questions"]) + "</ol>")
+    if report.get("changelog"):
+        body.append("<h2>What changed after vendor response</h2><ul>"
+                    + "".join(f"<li><strong>{c['dimension']}</strong>: {c['change']} ({c['evidence']})</li>"
+                              for c in report["changelog"]) + "</ul>")
     m = report["meta"]
     html = template
     for tok, val in [("{{VENDOR}}", m["vendor"]), ("{{CATEGORY}}", m["category"]),

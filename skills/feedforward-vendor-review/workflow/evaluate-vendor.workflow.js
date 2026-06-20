@@ -15,7 +15,13 @@ phase('Evidence')
 const dossier = await agent(
   `Build the evidence dossier for vendor: ${JSON.stringify(args)}. Tag every fact with source_type, evidence_strength, confidence. Apply the absence-as-evidence rule.`,
   { label: 'evidence', schema: { type: 'object', additionalProperties: false,
-      required: ['facts'], properties: { facts: { type: 'array', items: { type: 'object' } } } } }
+      required: ['vendor', 'scope_check', 'facts', 'gaps'],
+      properties: {
+        vendor: { type: 'string' },
+        scope_check: { type: 'object' },
+        facts: { type: 'array', items: { type: 'object' } },
+        gaps: { type: 'array', items: { type: 'object' } }
+      } } }
 )
 
 phase('Analyze')
