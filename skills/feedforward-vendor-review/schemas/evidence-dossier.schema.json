@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["vendor", "scope_check", "facts", "gaps"],
+  "properties": {
+    "vendor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "url", "category"],
+      "properties": {
+        "name": {"type": "string"},
+        "url": {"type": "string"},
+        "category": {"type": "string"}
+      }
+    },
+    "scope_check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["is_ai_b2b_saas", "rationale"],
+      "properties": {
+        "is_ai_b2b_saas": {"type": "boolean"},
+        "rationale": {"type": "string"}
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "claim", "dimensions", "source_type", "source_ref",
+                     "quote", "evidence_strength", "expectation_set", "confidence"],
+        "properties": {
+          "id": {"type": "string"},
+          "claim": {"type": "string"},
+          "dimensions": {"type": "array", "minItems": 1,
+            "items": {"enum": ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]}},
+          "source_type": {"enum": ["vendor_docs", "third_party", "user_material", "vendor_response"]},
+          "source_ref": {"type": "string"},
+          "quote": {"type": "string"},
+          "evidence_strength": {"enum": ["verified", "vendor_claim", "inferred", "informative_absence", "user_provided"]},
+          "expectation_set": {"type": "string"},
+          "confidence": {"enum": ["high", "medium", "low"]}
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["dimension", "missing", "suggested_vendor_question"],
+        "properties": {
+          "dimension": {"enum": ["SEE", "CHANGE", "ADAPT", "USE", "LEARN", "EXIT"]},
+          "missing": {"type": "string"},
+          "suggested_vendor_question": {"type": "string"}
+        }
+      }
+    }
+  }
+}
