@@ -1,0 +1,6 @@
+{
+  "vendor": "Glean",
+  "scores": {"SEE": "Fail", "CHANGE": "Partial", "ADAPT": "Partial",
+             "USE": "Pass", "LEARN": "Fail", "EXIT": "Fail"},
+  "themes": ["knowledge graph", "lock-in"]
+}

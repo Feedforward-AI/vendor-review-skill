@@ -1,0 +1,6 @@
+{
+  "vendor": "Legora",
+  "scores": {"SEE": "Partial", "CHANGE": "Partial", "ADAPT": "Partial",
+             "USE": "Partial", "LEARN": "Partial", "EXIT": "Partial"},
+  "themes": ["Azure", "OpenAI"]
+}
