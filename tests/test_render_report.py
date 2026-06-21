@@ -317,3 +317,25 @@ def test_html_detail_has_subheads():
     html = render_report.render_html(load(), TEMPLATE)
     assert "class='subhead'>Trade-offs<" in html
     assert "class='subhead'>Questions for Vendor<" in html
+
+
+def test_html_emphasis_renders_adjacent_italic_spans_separately():
+    r = load()
+    r["detailed"][0]["assessment"] = "It is *fast* and *cheap* overall. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<em>fast</em> and <em>cheap</em>" in html
+
+
+def test_html_emphasis_single_char_span():
+    r = load()
+    r["detailed"][0]["assessment"] = "Graded *A* by reviewers here. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<em>A</em>" in html
+
+
+def test_html_emphasis_leaves_unpaired_intraword_asterisk():
+    r = load()
+    r["detailed"][0]["assessment"] = "The 5*4 grid and *real* emphasis. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "5*4" in html
+    assert "<em>real</em>" in html

@@ -17,8 +17,8 @@ def _e(value):
     return _html.escape(str(value))
 
 
-_BOLD = re.compile(r"\*\*(\S(?:.*?\S)?)\*\*")
-_ITALIC = re.compile(r"\*(\S(?:.*?\S)?)\*")
+_BOLD = re.compile(r"\*\*([^*\s](?:[^*]*[^*\s])?)\*\*")
+_ITALIC = re.compile(r"\*([^*\s](?:[^*]*[^*\s])?)\*")
 
 
 def _rich(value):
