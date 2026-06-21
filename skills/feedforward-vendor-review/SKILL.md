@@ -92,7 +92,7 @@ If any dimension result fails either flank or the immutability guard, re-run the
 
 ## Review Gate
 
-**Non-blocking.** After Stage 4, present the draft report to the exec along with a concise "where your input would matter most" summary derived from the drift flags and open vendor questions.
+**Non-blocking.** After Stage 4, present the draft report to the exec. Follow `reference/synthesis/review-gate.md` (authoritative) for the exact presentation: lead with "**the report is ready to finalize**," then — only if the drift check produced flags or left vendor questions open — make a direct, itemized ask: "a few areas would be sharper with more info; **do you have any of the following?**" followed by a short numbered list (typically 3–6 items, highest-impact first) drawn from the `flags` array and open vendor questions. Each item is a plain-language request tagged with its dimension, not a status dump. Close with a clear escape hatch — none of it is required, and any non-corrective reply finalizes the report as-is. If there are no material flags, say so and do not manufacture asks.
 
 **What the exec may do:**
 - Correct **evidence** — supply a document, fact, or clarification that changes what is known about the vendor. Triggers a partial re-run of affected stages.

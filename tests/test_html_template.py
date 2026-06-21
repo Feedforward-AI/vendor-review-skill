@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 F = ROOT / "skills/feedforward-vendor-review/assets/report-template.html"
@@ -16,8 +17,15 @@ def test_design_system_tokens_and_dual_sizing():
         assert token in t, f"missing token {token}"
     assert "Calibri" in t
     assert "Carlito" in t
-    assert "@media print" in t
-    assert "@media screen" in t
-    assert "11pt" in t  # faithful print baseline
     for cls in ["key-takeaway", "kt-label", "subhead"]:
         assert cls in t, f"missing style hook {cls}"
+
+    # Dual sizing: the screen baseline (17px) and the faithful print baseline (11pt)
+    # must each live inside their own media query — no unconditional :root font-size
+    # that would shadow one of them.
+    screen = re.search(r"@media screen\s*\{[^}]*:root\s*\{\s*font-size:\s*17px", t)
+    printq = re.search(r"@media print\s*\{[^}]*:root\s*\{\s*font-size:\s*11pt", t)
+    assert screen, "screen baseline (17px) not set inside @media screen"
+    assert printq, "print baseline (11pt) not set inside @media print"
+    # 11pt must appear ONLY as the print override, never as an unconditional rule.
+    assert t.count("11pt") == 1, "11pt should appear once, inside @media print"

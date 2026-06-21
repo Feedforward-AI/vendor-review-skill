@@ -8,10 +8,10 @@
     --ink:#2D3748; --body:#4A5568;
     --pass:#38A169; --partial:#D69E2E; --fail:#E53E3E; --insufficient:#718096;
     --rule:#E2E8F0; --header-bg:#EDF2F7;
-    font-size: 17px;                 /* screen: ~1.15x the print baseline, for reading comfort */
   }
-  @media screen { :root { font-size: 17px; } }  /* screen baseline */
-  @media print { :root { font-size: 11pt; } }   /* faithful DOCX baseline */
+  /* Dual sizing: larger on screen for reading, faithful DOCX baseline in print. */
+  @media screen { :root { font-size: 17px; } }  /* ~1.15x the print baseline */
+  @media print  { :root { font-size: 11pt; } }  /* faithful DOCX baseline */
 
   body { font-family: Calibri, Carlito, "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
          color: var(--body); max-width: 820px; margin: 0 auto; padding: 2.5rem 2rem;
