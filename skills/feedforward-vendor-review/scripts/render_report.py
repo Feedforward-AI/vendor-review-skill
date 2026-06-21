@@ -1,6 +1,7 @@
 """Render a Feedforward vendor-review report.json into Markdown + self-contained HTML."""
 import html as _html
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -14,6 +15,24 @@ CSS_CLASS = {"Pass": "result-pass", "Partial": "result-partial",
 def _e(value):
     """HTML-escape a dynamic value."""
     return _html.escape(str(value))
+
+
+_BOLD = re.compile(r"\*\*(\S(?:.*?\S)?)\*\*")
+_ITALIC = re.compile(r"\*(\S(?:.*?\S)?)\*")
+
+
+def _rich(value):
+    """HTML-escape, then render inline Markdown emphasis as <strong>/<em>.
+
+    Escaping runs first and emphasis only wraps captured (already-escaped)
+    groups, so the result stays injection-safe. Emphasis markers must hug
+    non-whitespace (``*word*``), so literal asterisks like ``3 * 4`` are left
+    alone. Bold is converted before italic so ``**x**`` is not mis-split.
+    """
+    s = _html.escape(str(value))
+    s = _BOLD.sub(r"<strong>\1</strong>", s)
+    s = _ITALIC.sub(r"<em>\1</em>", s)
+    return s
 
 
 def _result(r):
@@ -89,13 +108,14 @@ def _detail_html(report):
     for dim in DIM_ORDER:
         d = by_dim[dim]
         cls = CSS_CLASS.get(d["score"], "")
-        rows.append(f"<h3>{_e(dim)} — {_e(d['focus_area'])} "
+        rows.append(f"<h3><span class='{cls}'>{_e(dim)}</span> — {_e(d['focus_area'])} "
                     f"<span class='{cls}'>[{_e(_result(d['score']))}]</span></h3>")
-        rows.append(f"<p>{_e(d['assessment'])}</p>")
-        rows.append(f"<p><span class='gain'>+ Gain:</span> {_e(d['trade_offs']['gain'])}<br>"
-                    f"<span class='giveup'>− Give up:</span> {_e(d['trade_offs']['give_up'])}</p>")
-        rows.append("<p><strong>Questions for Vendor</strong></p><ul>"
-                    + "".join(f"<li>{_e(q)}</li>" for q in d["vendor_questions"]) + "</ul>")
+        rows.append(f"<p>{_rich(d['assessment'])}</p>")
+        rows.append("<p class='subhead'>Trade-offs</p>")
+        rows.append(f"<p><span class='gain'>+ Gain:</span> {_rich(d['trade_offs']['gain'])}<br>"
+                    f"<span class='giveup'>− Give up:</span> {_rich(d['trade_offs']['give_up'])}</p>")
+        rows.append("<p class='subhead'>Questions for Vendor</p><ul>"
+                    + "".join(f"<li>{_rich(q)}</li>" for q in d["vendor_questions"]) + "</ul>")
     return "\n".join(rows)
 
 
@@ -121,7 +141,7 @@ def _tradeoff_html(report):
             cls = CSS_CLASS.get(row["result"], "")
             rows.append(f"<tr><td>{_e(row['dimension'])}</td>"
                         f"<td class='{cls}'>{_e(_result(row['result']))}</td>"
-                        f"<td>{_e(row['gain'])}</td><td>{_e(row['give_up'])}</td></tr>")
+                        f"<td>{_rich(row['gain'])}</td><td>{_rich(row['give_up'])}</td></tr>")
     rows.append("</table>")
     return "\n".join(rows)
 
@@ -130,19 +150,19 @@ def render_html(report, template):
     es = report["executive_summary"]
     body = []
     body.append("<h2>Executive Summary</h2>")
-    body.append(f"<p><strong>KEY TAKEAWAY</strong> — {_e(es['key_takeaway'])}</p>")
+    body.append(f"<p class='key-takeaway'><span class='kt-label'>KEY TAKEAWAY</span>{_rich(es['key_takeaway'])}</p>")
     for p in es["paragraphs"]:
-        body.append(f"<p>{_e(p)}</p>")
-    body.append(f"<p>{_e(es['suitability'])}</p>")
+        body.append(f"<p>{_rich(p)}</p>")
+    body.append(f"<p>{_rich(es['suitability'])}</p>")
     body.append(_overview_html(report))
     body.append("<h2>Detailed Evaluation</h2>")
     body.append(_detail_html(report))
     body.append(_tradeoff_html(report))
     body.append("<h2>Key Questions for Your Decision</h2><ol>"
-                + "".join(f"<li>{_e(q)}</li>" for q in report["key_questions"]) + "</ol>")
+                + "".join(f"<li>{_rich(q)}</li>" for q in report["key_questions"]) + "</ol>")
     if report.get("changelog"):
         body.append("<h2>What changed after vendor response</h2><ul>"
-                    + "".join(f"<li><strong>{_e(c['dimension'])}</strong>: {_e(c['change'])} ({_e(c['evidence'])})</li>"
+                    + "".join(f"<li><strong>{_e(c['dimension'])}</strong>: {_rich(c['change'])} ({_e(c['evidence'])})</li>"
                               for c in report["changelog"]) + "</ul>")
     m = report["meta"]
     html = template
@@ -156,8 +176,8 @@ def render_html(report, template):
 def render_questions_html(report, template):
     items = []
     for q in report["vendor_questions"]:
-        why = f"<br><em>{_e(q['why_we_ask'])}</em>" if q.get("why_we_ask") else ""
-        items.append(f"<li><strong>[{_e(q['dimension'])}]</strong> {_e(q['question'])}{why}</li>")
+        why = f"<br><em>{_rich(q['why_we_ask'])}</em>" if q.get("why_we_ask") else ""
+        items.append(f"<li><strong>[{_e(q['dimension'])}]</strong> {_rich(q['question'])}{why}</li>")
     body = ("<h2>Questions for the Vendor</h2>"
             "<p>Sharp, specific questions the vendor can respond to. Substantive answers may move the diagnosis.</p>"
             "<ol>" + "".join(items) + "</ol>")
