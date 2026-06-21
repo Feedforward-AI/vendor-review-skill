@@ -260,3 +260,82 @@ def test_html_escape_result_in_tradeoff_table():
     assert "Pa&lt;b&gt;ss" in html
     # Raw version and stray <b> tag must not appear
     assert "Pa<b>ss" not in html
+
+
+# --- Visual redesign: inline emphasis + faithful markup ---
+
+def test_html_renders_markdown_italic_emphasis():
+    r = load()
+    r["detailed"][0]["assessment"] = "Harvey provides *meaningful* transparency. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<em>meaningful</em>" in html
+    assert "*meaningful*" not in html
+
+def test_html_renders_markdown_bold_emphasis():
+    r = load()
+    r["executive_summary"]["paragraphs"][0] = "This is **critical** context here."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<strong>critical</strong>" in html
+    assert "**critical**" not in html
+
+def test_html_emphasis_preserves_escaping():
+    r = load()
+    r["detailed"][0]["assessment"] = "*<script>x</script>* normal. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<script>x</script>" not in html
+    assert "<em>&lt;script&gt;x&lt;/script&gt;</em>" in html
+
+
+def test_html_emphasis_preserves_escaping_in_key_takeaway():
+    r = load()
+    r["executive_summary"]["key_takeaway"] = "*<b>bold</b>* and normal."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<b>bold</b>" not in html
+    assert "<em>&lt;b&gt;bold&lt;/b&gt;</em>" in html
+
+def test_html_emphasis_ignores_spaced_asterisks():
+    r = load()
+    r["detailed"][0]["assessment"] = "A times B is 3 * 4 here. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "3 * 4" in html  # not turned into an <em>
+
+def test_html_dimension_heading_colored_by_result():
+    r = load()
+    for d in r["detailed"]:
+        if d["dimension"] == "SEE":
+            d["score"] = "Fail"
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<span class='result-fail'>SEE</span>" in html
+
+def test_html_key_takeaway_label_markup():
+    html = render_report.render_html(load(), TEMPLATE)
+    assert "class='key-takeaway'" in html
+    assert "class='kt-label'" in html
+    assert "KEY TAKEAWAY" in html
+
+def test_html_detail_has_subheads():
+    html = render_report.render_html(load(), TEMPLATE)
+    assert "class='subhead'>Trade-offs<" in html
+    assert "class='subhead'>Questions for Vendor<" in html
+
+
+def test_html_emphasis_renders_adjacent_italic_spans_separately():
+    r = load()
+    r["detailed"][0]["assessment"] = "It is *fast* and *cheap* overall. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<em>fast</em> and <em>cheap</em>" in html
+
+
+def test_html_emphasis_single_char_span():
+    r = load()
+    r["detailed"][0]["assessment"] = "Graded *A* by reviewers here. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<em>A</em>" in html
+
+
+def test_html_emphasis_leaves_unpaired_intraword_asterisk():
+    r = load()
+    r["detailed"][0]["assessment"] = "The 5*4 grid and *real* emphasis. Second sentence."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "5*4" in html
+    assert "<em>real</em>" in html
