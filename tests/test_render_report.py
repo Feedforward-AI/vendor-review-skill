@@ -285,6 +285,14 @@ def test_html_emphasis_preserves_escaping():
     assert "<script>x</script>" not in html
     assert "<em>&lt;script&gt;x&lt;/script&gt;</em>" in html
 
+
+def test_html_emphasis_preserves_escaping_in_key_takeaway():
+    r = load()
+    r["executive_summary"]["key_takeaway"] = "*<b>bold</b>* and normal."
+    html = render_report.render_html(r, TEMPLATE)
+    assert "<b>bold</b>" not in html
+    assert "<em>&lt;b&gt;bold&lt;/b&gt;</em>" in html
+
 def test_html_emphasis_ignores_spaced_asterisks():
     r = load()
     r["detailed"][0]["assessment"] = "A times B is 3 * 4 here. Second sentence."
