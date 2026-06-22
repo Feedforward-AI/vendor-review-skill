@@ -104,6 +104,8 @@ If drift affects a dimension, re-run only the affected dimension pass with the s
 
 ## Review Gate
 
+Follow `references/synthesis/review-gate.md` as the authoritative protocol for gated, one-shot, and unattended modes, including flag ordering and the no-open-asks case. The summary below is subordinate to that file.
+
 In `gated` mode, present the draft after Stage 4. Lead with: "the report is ready to finalize". If flags or open high-impact vendor questions remain, ask: "a few areas would be sharper with more info; do you have any of the following?" Then list 3-6 highest-impact asks with dimension labels.
 
 The executive may correct evidence, answer open vendor questions from direct knowledge, or refine org context. Treat executive answers from direct knowledge as `source_type: user_material` evidence with `evidence_strength: user_provided`, not as `vendor_response`. Re-run only affected stages. The executive may not change a score by preference, override a criterion, or force a buy/don't-buy conclusion.
