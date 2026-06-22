@@ -1,6 +1,6 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-R = ROOT / "skills/feedforward-vendor-review/reference"
+R = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/references"
 
 def test_exec_summary_spec():
     t = (R / "synthesis/executive-summary.md").read_text().lower()

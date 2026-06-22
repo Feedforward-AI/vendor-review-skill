@@ -1,6 +1,6 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-F = ROOT / "skills/feedforward-vendor-review/reference/drift-check.md"
+F = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/references/drift-check.md"
 
 def test_symmetric_checks_and_immutability():
     t = F.read_text().lower()

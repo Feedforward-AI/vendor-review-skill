@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feedforward Vendor Review"
+  short_description: "Evaluate AI vendors for AI capacity"
+  default_prompt: "Use $feedforward-vendor-review to evaluate an AI vendor for independent AI capacity."

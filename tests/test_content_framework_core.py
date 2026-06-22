@@ -1,6 +1,6 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-F = ROOT / "skills/feedforward-vendor-review/reference/framework-core.md"
+F = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/references/framework-core.md"
 
 def test_anchors_present():
     t = F.read_text()

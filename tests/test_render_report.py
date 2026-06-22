@@ -4,7 +4,7 @@ import render_report
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "tests/fixtures/sample_report.json"
-TEMPLATE = (ROOT / "skills/feedforward-vendor-review/assets/report-template.html").read_text()
+TEMPLATE = (ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/assets/report-template.html").read_text()
 
 def load(): return json.loads(FIX.read_text())
 

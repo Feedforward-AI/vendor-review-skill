@@ -1,6 +1,6 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-D = ROOT / "skills/feedforward-vendor-review/reference/dimensions"
+D = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/references/dimensions"
 
 NAMES = ["see", "change", "adapt", "use", "learn", "exit"]
 

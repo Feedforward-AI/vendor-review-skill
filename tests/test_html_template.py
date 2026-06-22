@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-F = ROOT / "skills/feedforward-vendor-review/assets/report-template.html"
+F = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/assets/report-template.html"
 
 def test_tokens_and_color_classes():
     t = F.read_text()

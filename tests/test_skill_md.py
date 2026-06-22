@@ -1,6 +1,6 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-F = ROOT / "skills/feedforward-vendor-review/SKILL.md"
+F = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/SKILL.md"
 
 def test_frontmatter_and_pipeline():
     t = F.read_text()
