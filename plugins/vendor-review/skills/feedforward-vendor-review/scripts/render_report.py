@@ -125,13 +125,17 @@ def _detail_html(report):
     for dim in DIM_ORDER:
         d = by_dim[dim]
         cls = CSS_CLASS.get(d["score"], "")
-        rows.append(f"<section class='dimension-card {cls}'>")
+        card_cls = cls.replace("result-", "dimension-") if cls else ""
+        rows.append(f"<section class='dimension-card {card_cls}'>")
         rows.append(f"<h3><span class='{cls}'>{_e(dim)}</span> — {_e(d['focus_area'])} "
                     f"<span class='{cls}'>[{_e(_result(d['score']))}]</span></h3>")
-        rows.append("<div class='evidence-meta'>"
-                    f"<span>Confidence: <strong>{_e(str(d['confidence']).title())}</strong></span>"
-                    f"<span>Evidence: <strong>{_e(str(d['evidence_basis']).replace('_', ' '))}</strong></span>"
-                    "</div>")
+        meta = []
+        if d.get("confidence"):
+            meta.append(f"<span>Confidence: <strong>{_e(str(d['confidence']).title())}</strong></span>")
+        if d.get("evidence_basis"):
+            meta.append(f"<span>Evidence: <strong>{_e(str(d['evidence_basis']).replace('_', ' '))}</strong></span>")
+        if meta:
+            rows.append("<div class='evidence-meta'>" + "".join(meta) + "</div>")
         rows.append(f"<p>{_rich(d['assessment'])}</p>")
         rows.append("<p class='subhead'>Trade-offs</p>")
         rows.append(f"<p><span class='gain'>+ Gain:</span> {_rich(d['trade_offs']['gain'])}<br>"

@@ -329,6 +329,21 @@ def test_html_has_score_strip_and_evidence_blocks():
     assert "Glean trust portal" in html
 
 
+def test_html_dimension_card_does_not_use_global_result_class():
+    html = render_report.render_html(load(), TEMPLATE)
+    assert "class='dimension-card dimension-fail'" in html
+    assert "class='dimension-card result-fail'" not in html
+
+
+def test_html_missing_evidence_metadata_fields_still_renders():
+    r = load()
+    r["detailed"][0].pop("confidence")
+    r["detailed"][0].pop("evidence_basis")
+    html = render_report.render_html(r, TEMPLATE)
+    assert "Detailed Evaluation" in html
+    assert "Glean product documentation" in html
+
+
 def test_html_emphasis_renders_adjacent_italic_spans_separately():
     r = load()
     r["detailed"][0]["assessment"] = "It is *fast* and *cheap* overall. Second sentence."

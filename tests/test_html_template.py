@@ -34,3 +34,5 @@ def test_report_layout_style_hooks():
     t = F.read_text()
     for cls in ["report-shell", "score-grid", "score-card", "dimension-card", "evidence-meta", "evidence-list"]:
         assert cls in t, f"missing report layout hook {cls}"
+    for cls in ["dimension-pass", "dimension-partial", "dimension-fail", "dimension-insufficient"]:
+        assert cls in t, f"missing dimension state hook {cls}"
