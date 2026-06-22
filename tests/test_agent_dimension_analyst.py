@@ -9,4 +9,4 @@ def test_frontmatter_and_harness():
     assert "framework-core" in body          # injects the law
     assert "not a generic" in body           # negative instruction
     assert "dimension-result" in body        # output contract
-    assert "marketing claims" in body and "claims" in body
+    assert "marketing claims" in body

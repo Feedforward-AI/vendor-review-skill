@@ -75,7 +75,7 @@ def _schema_vocab():
 
 def _prose_files():
     """The instruction files whose vocabulary drives schema-constrained generation."""
-    files = [SKILL / "SKILL.md", SKILL / "references" / "dimension-analyst.md"]
+    files = [SKILL / "SKILL.md"]
     files += sorted((SKILL / "references").rglob("*.md"))
     return [p for p in files if p.exists()]
 

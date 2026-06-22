@@ -106,7 +106,7 @@ If drift affects a dimension, re-run only the affected dimension pass with the s
 
 In `gated` mode, present the draft after Stage 4. Lead with: "the report is ready to finalize". If flags or open high-impact vendor questions remain, ask: "a few areas would be sharper with more info; do you have any of the following?" Then list 3-6 highest-impact asks with dimension labels.
 
-The executive may correct evidence, answer open vendor questions from direct knowledge, or refine org context. Re-run only affected stages. The executive may not change a score by preference, override a criterion, or force a buy/don't-buy conclusion.
+The executive may correct evidence, answer open vendor questions from direct knowledge, or refine org context. Treat executive answers from direct knowledge as `source_type: user_material` evidence with `evidence_strength: user_provided`, not as `vendor_response`. Re-run only affected stages. The executive may not change a score by preference, override a criterion, or force a buy/don't-buy conclusion.
 
 Any non-corrective reply finalizes the report as-is.
 
@@ -132,6 +132,6 @@ Fix all lint violations before delivery. Do not deliver a report that fails lint
 
 When the executive supplies vendor answers, treat the new material as a vendor-response pass.
 
-Ingest each answer with `source_type: vendor_response`. Adjudicate it internally as substantive and verifiable, claim only, roadmap, non-responsive, or unanswered. Convert that adjudication into valid dossier fields: verified substantive evidence becomes `verified`; unverifiable claims and roadmap promises become `vendor_claim`; non-responsive answers may harden a documented silence into `informative_absence`; unanswered items remain gaps.
+Ingest each answer with `source_type: vendor_response`. Adjudicate it internally as substantive and verifiable, claim only, roadmap, non-responsive, or unanswered. Convert that adjudication into valid dossier fields: verified substantive evidence becomes `verified`; unverifiable claims and roadmap promises become `vendor_claim`; non-responsive answers may harden a documented silence into `informative_absence`; unanswered items remain gaps. Apply the scoring effect of the adjudication: a dodge or non-responsive answer on a critical question can harden `Partial` to `Fail`, while substantive verified evidence can upgrade `Fail` or `Partial` when the unchanged rubric warrants it.
 
 Re-run only affected dimension passes, then rerun synthesis and drift check. Bump the minor report version and populate the report changelog with dimension, change, and evidence entries. Render and lint again.
