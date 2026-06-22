@@ -1,0 +1,36 @@
+{
+  "name": "vendor-review",
+  "version": "0.1.0",
+  "description": "Evaluate AI-powered B2B SaaS vendors against Feedforward's six-dimension framework for independent AI capacity.",
+  "author": {
+    "name": "Feedforward",
+    "url": "https://github.com/Feedforward-AI"
+  },
+  "homepage": "https://github.com/Feedforward-AI/vendor-review-skill",
+  "repository": "https://github.com/Feedforward-AI/vendor-review-skill",
+  "license": "UNLICENSED",
+  "keywords": [
+    "ai",
+    "vendor-evaluation",
+    "procurement",
+    "feedforward",
+    "capacity"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Feedforward Vendor Review",
+    "shortDescription": "Evaluate AI vendors for AI capacity",
+    "longDescription": "Evaluate AI-powered B2B SaaS vendors against Feedforward's six-dimension framework to understand transparency, customizability, agility, utility, transferable learning, and portability risks.",
+    "developerName": "Feedforward",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Evaluate Glean with the Feedforward vendor review.",
+      "Run a one-shot Feedforward vendor review for Harvey.",
+      "Reassess a vendor response with Feedforward."
+    ]
+  }
+}

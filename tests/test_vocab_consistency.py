@@ -19,7 +19,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "feedforward-vendor-review"
+SKILL = ROOT / "plugins" / "vendor-review" / "skills" / "feedforward-vendor-review"
 
 # Deliberate non-schema identifiers used in the instruction prose: operational
 # modes, a config parameter, and one term referenced precisely BECAUSE it is not
@@ -75,8 +75,8 @@ def _schema_vocab():
 
 def _prose_files():
     """The instruction files whose vocabulary drives schema-constrained generation."""
-    files = [SKILL / "SKILL.md", ROOT / "agents" / "dimension-analyst.md"]
-    files += sorted((SKILL / "reference").rglob("*.md"))
+    files = [SKILL / "SKILL.md"]
+    files += sorted((SKILL / "references").rglob("*.md"))
     return [p for p in files if p.exists()]
 
 

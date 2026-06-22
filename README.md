@@ -1,6 +1,6 @@
 # Feedforward Vendor Review
 
-A Claude Code skill that evaluates AI-powered B2B SaaS vendors against Feedforward's six-dimension framework for independent AI capacity.
+A Claude Code and Codex plugin that evaluates AI-powered B2B SaaS vendors against Feedforward's six-dimension framework for independent AI capacity.
 
 ---
 
@@ -31,6 +31,8 @@ The Feedforward framework evaluates vendors across six dimensions of independent
 
 ## Install
 
+### Claude Code
+
 **Step 1 — Add from the marketplace:**
 ```
 /plugin marketplace add Feedforward-AI/vendor-review-skill
@@ -39,6 +41,26 @@ The Feedforward framework evaluates vendors across six dimensions of independent
 **Step 2 — Activate in your session:**
 ```
 /plugin install vendor-review@feedforward
+```
+
+### Codex
+
+**Step 1 — Add from the marketplace:**
+
+```bash
+codex plugin marketplace add Feedforward-AI/vendor-review-skill
+```
+
+**Step 2 — Install the plugin:**
+
+```bash
+codex plugin add vendor-review@feedforward
+```
+
+Then invoke the bundled skill in a new Codex thread:
+
+```
+Use $feedforward-vendor-review to evaluate Glean
 ```
 
 ---
@@ -91,7 +113,7 @@ The skill re-runs the affected dimension analysts against the new evidence, prod
 
 ## Framework Integrity
 
-`reference/framework-core.md`, `reference/dimensions/*.md`, and `reference/drift-check.md` are **immutable law**. They must not be edited to soften opinions, lower thresholds, or accommodate vendor pushback. User input may correct evidence or supply organizational context, but may not change scores without evidence or override framework criteria. If you believe a criterion is wrong, raise it with Feedforward — do not silently alter the reference files.
+`references/framework-core.md`, `references/dimensions/*.md`, and `references/drift-check.md` are **immutable law**. They must not be edited to soften opinions, lower thresholds, or accommodate vendor pushback. User input may correct evidence or supply organizational context, but may not change scores without evidence or override framework criteria. If you believe a criterion is wrong, raise it with Feedforward — do not silently alter the reference files.
 
 ---
 

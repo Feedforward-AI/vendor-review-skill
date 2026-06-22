@@ -4,7 +4,7 @@ import jsonschema
 from so_schema_check import check_so_compliance
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = ROOT / "skills/feedforward-vendor-review/schemas/evidence-dossier.schema.json"
+SCHEMA = ROOT / "plugins/vendor-review/skills/feedforward-vendor-review/schemas/evidence-dossier.schema.json"
 
 def load(): return json.loads(SCHEMA.read_text())
 
