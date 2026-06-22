@@ -39,6 +39,23 @@ def _result(r):
     return DISPLAY.get(r, r)
 
 
+def _score_strip_html(report):
+    cards = []
+    by_overview = {r["dimension"]: r for r in report["overview_table"]}
+    for dim in DIM_ORDER:
+        if dim in by_overview:
+            row = by_overview[dim]
+            cls = CSS_CLASS.get(row["result"], "")
+            cards.append(
+                f"<div class='score-card {cls}'>"
+                f"<div class='score-label'>{_e(row['dimension'])}</div>"
+                f"<div class='score-focus'>{_e(row['focus_area'])}</div>"
+                f"<div class='score-result'>{_e(_result(row['result']))}</div>"
+                "</div>"
+            )
+    return "<div class='score-grid'>" + "".join(cards) + "</div>"
+
+
 def render_markdown(report):
     m = report["meta"]
     out = []
@@ -108,19 +125,33 @@ def _detail_html(report):
     for dim in DIM_ORDER:
         d = by_dim[dim]
         cls = CSS_CLASS.get(d["score"], "")
+        card_cls = cls.replace("result-", "dimension-") if cls else ""
+        rows.append(f"<section class='dimension-card {card_cls}'>")
         rows.append(f"<h3><span class='{cls}'>{_e(dim)}</span> — {_e(d['focus_area'])} "
                     f"<span class='{cls}'>[{_e(_result(d['score']))}]</span></h3>")
+        meta = []
+        if d.get("confidence"):
+            meta.append(f"<span>Confidence: <strong>{_e(str(d['confidence']).title())}</strong></span>")
+        if d.get("evidence_basis"):
+            meta.append(f"<span>Evidence: <strong>{_e(str(d['evidence_basis']).replace('_', ' '))}</strong></span>")
+        if meta:
+            rows.append("<div class='evidence-meta'>" + "".join(meta) + "</div>")
         rows.append(f"<p>{_rich(d['assessment'])}</p>")
         rows.append("<p class='subhead'>Trade-offs</p>")
         rows.append(f"<p><span class='gain'>+ Gain:</span> {_rich(d['trade_offs']['gain'])}<br>"
                     f"<span class='giveup'>− Give up:</span> {_rich(d['trade_offs']['give_up'])}</p>")
+        if d.get("evidence_citations"):
+            rows.append("<p class='subhead'>Evidence Base</p><ul class='evidence-list'>"
+                        + "".join(f"<li>{_rich(c)}</li>" for c in d["evidence_citations"])
+                        + "</ul>")
         rows.append("<p class='subhead'>Questions for Vendor</p><ul>"
                     + "".join(f"<li>{_rich(q)}</li>" for q in d["vendor_questions"]) + "</ul>")
+        rows.append("</section>")
     return "\n".join(rows)
 
 
 def _overview_html(report):
-    body = ["<h2>Evaluation Overview</h2><table><tr><th>Criterion</th><th>Focus Area</th><th>Result</th></tr>"]
+    body = ["<h2>Evaluation Overview</h2><table class='overview-table'><tr><th>Criterion</th><th>Focus Area</th><th>Result</th></tr>"]
     by_overview = {r["dimension"]: r for r in report["overview_table"]}
     for dim in DIM_ORDER:
         if dim in by_overview:
@@ -133,7 +164,7 @@ def _overview_html(report):
 
 def _tradeoff_html(report):
     rows = ["<h2>Trade-off Summary</h2>"
-            "<table><tr><th>Criterion</th><th>Result</th><th>You Gain</th><th>You Give Up</th></tr>"]
+            "<table class='tradeoff-table'><tr><th>Criterion</th><th>Result</th><th>You Gain</th><th>You Give Up</th></tr>"]
     by_tradeoff = {r["dimension"]: r for r in report["tradeoff_summary"]}
     for dim in DIM_ORDER:
         if dim in by_tradeoff:
@@ -154,6 +185,7 @@ def render_html(report, template):
     for p in es["paragraphs"]:
         body.append(f"<p>{_rich(p)}</p>")
     body.append(f"<p>{_rich(es['suitability'])}</p>")
+    body.append(_score_strip_html(report))
     body.append(_overview_html(report))
     body.append("<h2>Detailed Evaluation</h2>")
     body.append(_detail_html(report))

@@ -29,3 +29,10 @@ def test_design_system_tokens_and_dual_sizing():
     assert printq, "print baseline (11pt) not set inside @media print"
     # 11pt must appear ONLY as the print override, never as an unconditional rule.
     assert t.count("11pt") == 1, "11pt should appear once, inside @media print"
+
+def test_report_layout_style_hooks():
+    t = F.read_text()
+    for cls in ["report-shell", "score-grid", "score-card", "dimension-card", "evidence-meta", "evidence-list"]:
+        assert cls in t, f"missing report layout hook {cls}"
+    for cls in ["dimension-pass", "dimension-partial", "dimension-fail", "dimension-insufficient"]:
+        assert cls in t, f"missing dimension state hook {cls}"

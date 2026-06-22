@@ -319,6 +319,31 @@ def test_html_detail_has_subheads():
     assert "class='subhead'>Questions for Vendor<" in html
 
 
+def test_html_has_score_strip_and_evidence_blocks():
+    html = render_report.render_html(load(), TEMPLATE)
+    assert "class='score-grid'" in html
+    assert "class='score-card result-fail'" in html
+    assert "class='evidence-meta'" in html
+    assert "Confidence: <strong>High</strong>" in html
+    assert "Evidence Base" in html
+    assert "Glean trust portal" in html
+
+
+def test_html_dimension_card_does_not_use_global_result_class():
+    html = render_report.render_html(load(), TEMPLATE)
+    assert "class='dimension-card dimension-fail'" in html
+    assert "class='dimension-card result-fail'" not in html
+
+
+def test_html_missing_evidence_metadata_fields_still_renders():
+    r = load()
+    r["detailed"][0].pop("confidence")
+    r["detailed"][0].pop("evidence_basis")
+    html = render_report.render_html(r, TEMPLATE)
+    assert "Detailed Evaluation" in html
+    assert "Glean product documentation" in html
+
+
 def test_html_emphasis_renders_adjacent_italic_spans_separately():
     r = load()
     r["detailed"][0]["assessment"] = "It is *fast* and *cheap* overall. Second sentence."
